@@ -15,7 +15,7 @@ impl<T, const N: usize> Vector<T, N> {
         T: Add<Output = T> + Mul<Output = T> + Copy,
     {
         let mut res = self.data[0];
-        for i in 1..=self.data.len() {
+        for i in 0..=self.data.len() - 1 {
             res = self.data[i] * self.data[i] + res;
         }
         //TODO: res.sqrt()
@@ -27,7 +27,7 @@ impl<T, const N: usize> Vector<T, N> {
         T: Add<Output = T> + Div<Output = T> + Mul<Output = T> + Copy,
     {
         let mut data = self.data.clone();
-        for i in 0..=self.data.len() {
+        for i in 0..=self.data.len() - 1 {
             data[i] = self.data[i] / self.magnitude();
         }
         Vector { data }
@@ -65,9 +65,9 @@ where
     type Output = Self;
     fn add(self, rhs: Self) -> Self {
         let mut data = self.data.clone();
-        let len = self.data.len();
+        let len = self.data.len() - 1;
 
-        for i in 1..=len {
+        for i in 0..=len {
             data[i] = self.data[i] + rhs.data[i];
         }
 
@@ -82,9 +82,9 @@ where
     type Output = Self;
     fn sub(self, rhs: Self) -> Self {
         let mut data = self.data.clone();
-        let len = self.data.len();
+        let len = self.data.len() - 1;
 
-        for i in 1..=len {
+        for i in 0..=len {
             data[i] = self.data[i] - rhs.data[i];
         }
 
@@ -100,9 +100,9 @@ where
     type Output = Self;
     fn mul(self, rhs: T) -> Self {
         let mut data = self.data.clone();
-        let len = self.data.len();
+        let len = self.data.len() - 1;
 
-        for i in 1..=len {
+        for i in 0..=len {
             data[i] = self.data[i] * rhs;
         }
 
@@ -117,9 +117,9 @@ where
     type Output = Self;
     fn div(self, rhs: T) -> Self {
         let mut data = self.data.clone();
-        let len = self.data.len();
+        let len = self.data.len() - 1;
 
-        for i in 1..=len {
+        for i in 0..=len {
             data[i] = self.data[i] / rhs;
         }
 
@@ -136,7 +136,7 @@ where
     type Output = T;
     fn mul(self, rhs: Vector<T, N>) -> Self::Output {
         let mut res = self.data[0] * rhs.data[0];
-        let len = self.data.len();
+        let len = self.data.len() - 1;
 
         for i in 1..=len {
             res = self.data[i] * rhs.data[i] + res;
