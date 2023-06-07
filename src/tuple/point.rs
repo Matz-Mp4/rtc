@@ -1,15 +1,36 @@
+use super::tuple::Tuple;
 use super::vector::Vector;
 use std::cmp::PartialEq;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Point<T, const N: usize> {
-    pub data: [T; N],
+    data: [T; N],
 }
 
 impl<T, const N: usize> Point<T, N> {
     pub fn new(data: [T; N]) -> Self {
         Self { data }
+    }
+}
+
+//---------------------------Tuple---------------------------
+
+impl<T, const N: usize> Tuple<T> for Point<T, N>
+where
+    T: Copy,
+{
+    fn zero(zero: T) -> Self {
+        let data = [zero; N];
+        Point { data }
+    }
+
+    fn get<'a>(&'a self, i: usize) -> Option<&'a T> {
+        if i < self.data.len() {
+            return Some(&self.data[i]);
+        } else {
+            return None;
+        }
     }
 }
 
@@ -77,9 +98,9 @@ where
 }
 
 //Vector - Point = Point
-impl<T: Clone + Copy, const N: usize> Sub<Vector<T, N>> for Point<T, N>
+impl<T, const N: usize> Sub<Vector<T, N>> for Point<T, N>
 where
-    T: Sub<Output = T>,
+    T: Sub<Output = T> +  Copy, T: Clone + Copy
 {
     type Output = Point<T, N>;
     fn sub(self, rhs: Vector<T, N>) -> Self {
@@ -87,7 +108,7 @@ where
         let len = self.data.len() - 1;
 
         for i in 0..=len {
-            data[i] = self.data[i] - rhs.data[i];
+            data[i] = self.data[i] - *rhs.get(i).unwrap();
         }
 
         Point { data }

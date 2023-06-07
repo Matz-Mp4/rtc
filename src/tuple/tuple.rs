@@ -1,4 +1,6 @@
-pub trait Tuple<T> {
-    fn zero() -> Self;
-    fn get<'a>(i: usize) -> Option<&'a T>;
+pub trait Tuple<T: Copy> {
+    fn zero(zero: T) -> Self;
+    fn get<'a>(&'a self, i: usize) -> Option<&'a T>;
 }
+
+

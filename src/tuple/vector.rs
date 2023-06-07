@@ -2,10 +2,11 @@ use std::cmp::PartialEq;
 use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
 
 use super::point::Point;
+use super::tuple::Tuple;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vector<T, const N: usize> {
-    pub data: [T; N],
+    data: [T; N],
 }
 
 impl<T, const N: usize> Vector<T, N> {
@@ -33,6 +34,25 @@ impl<T, const N: usize> Vector<T, N> {
             data[i] = self.data[i] / self.magnitude();
         }
         Vector { data }
+    }
+}
+
+//---------------------------Tuple---------------------------
+impl<T, const N: usize> Tuple<T> for Vector<T, N>
+where
+    T: Copy,
+{
+    fn zero(zero: T) -> Self {
+        let data = [zero; N];
+        Vector { data }
+    }
+
+    fn get<'a>(&'a self, i: usize) -> Option<&'a T> {
+        if i < self.data.len() {
+            return Some(&self.data[i]);
+        } else {
+            return None;
+        }
     }
 }
 
@@ -105,10 +125,12 @@ where
         let len = self.data.len() - 1;
 
         for i in 0..=len {
-            data[i] = self.data[i] - rhs.data[i];
+            data[i] = self.data[i] - *rhs.get(i).unwrap();
         }
 
-        Point { data }
+        let res = Point::new(data);
+
+        res
     }
 }
 
