@@ -16,16 +16,16 @@ impl<T, const N: usize> Point<T, N> {
 
 //---------------------------Tuple---------------------------
 
-impl<T, const N: usize> Tuple<T> for Point<T, N>
-where
-    T: Copy,
-{
-    fn zero(zero: T) -> Self {
-        let data = [zero; N];
+//f64
+impl<const N: usize> Tuple<f64> for Point<f64, N> {
+    const ZERO: f64 = 0.0;
+
+    fn zero() -> Self {
+        let data = [Self::ZERO; N];
         Point { data }
     }
 
-    fn get<'a>(&'a self, i: usize) -> Option<&'a T> {
+    fn get<'a>(&'a self, i: usize) -> Option<&'a f64> {
         if i < self.data.len() {
             return Some(&self.data[i]);
         } else {
@@ -100,7 +100,8 @@ where
 //Vector - Point = Point
 impl<T, const N: usize> Sub<Vector<T, N>> for Point<T, N>
 where
-    T: Sub<Output = T> +  Copy, T: Clone + Copy
+    T: Sub<Output = T> + Copy,
+    T: Clone + Copy + Tuple<T>,
 {
     type Output = Point<T, N>;
     fn sub(self, rhs: Vector<T, N>) -> Self {

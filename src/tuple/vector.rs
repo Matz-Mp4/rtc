@@ -38,18 +38,21 @@ impl<T, const N: usize> Vector<T, N> {
 }
 
 //---------------------------Tuple---------------------------
-impl<T, const N: usize> Tuple<T> for Vector<T, N>
-where
-    T: Copy,
-{
-    fn zero(zero: T) -> Self {
-        let data = [zero; N];
+impl<T: Copy, const N: usize> Tuple<T> for Vector<T, N> {
+    const ZERO: 0.0;
+
+    fn zero() -> Self {
+        let data = [Self::ZERO; N];
         Vector { data }
     }
 
-    fn get<'a>(&'a self, i: usize) -> Option<&'a T> {
+    fn get<'a>(&'a self, i: usize) -> Option<&'a T>
+    where
+        T: Copy,
+    {
         if i < self.data.len() {
-            return Some(&self.data[i]);
+            let data = &(self.data[i] as T);
+            return Some(data);
         } else {
             return None;
         }
