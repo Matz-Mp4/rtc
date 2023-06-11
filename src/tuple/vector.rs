@@ -21,8 +21,8 @@ impl<T: Sqrt<Output = T>, const N: usize> Vector<T, N> {
     where
         T: Add<Output = T> + Mul<Output = T> + Copy,
     {
-        let mut res = self.data[0];
-        for i in 0..=self.data.len() - 1 {
+        let mut res = self.data[0] * self.data[0];
+        for i in 1..=self.data.len() - 1 {
             res = self.data[i] * self.data[i] + res;
         }
         <T as Sqrt>::sqrt(res)
