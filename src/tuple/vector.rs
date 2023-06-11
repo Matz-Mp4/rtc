@@ -3,6 +3,7 @@ use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
 
 use super::point::Point;
 use super::tuple::Tuple;
+use super::utils::Sqrt;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vector<T, const N: usize> {
@@ -13,6 +14,9 @@ impl<T, const N: usize> Vector<T, N> {
     pub fn new(data: [T; N]) -> Self {
         Self { data }
     }
+}
+
+impl<T: Sqrt<Output = T>, const N: usize> Vector<T, N> {
     pub fn magnitude(&self) -> T
     where
         T: Add<Output = T> + Mul<Output = T> + Copy,
@@ -21,8 +25,7 @@ impl<T, const N: usize> Vector<T, N> {
         for i in 0..=self.data.len() - 1 {
             res = self.data[i] * self.data[i] + res;
         }
-        //TODO: res.sqrt()
-        res
+        <T as Sqrt>::sqrt(res)
     }
 
     pub fn normalize(self) -> Self
@@ -101,7 +104,7 @@ where
     }
 }
 //Vector - Vector = Vector
-impl<T: Clone + Copy, const N: usize> Sub for Vector<T, N>
+impl<T: Clone + Copy, const N: usize> Sub<Vector<T, N>> for Vector<T, N>
 where
     T: Sub<Output = T>,
 {

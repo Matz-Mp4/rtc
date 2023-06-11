@@ -83,11 +83,30 @@ where
     }
 }
 
-impl<T: Clone + Copy + Default, const N: usize> Sub for Point<T, N>
+//Vector - Point = Point
+impl<T, const N: usize> Sub<Vector<T, N>> for Point<T, N>
+where
+    T: Sub<Output = T> + Copy,
+{
+    type Output = Point<T, N>;
+    fn sub(self, rhs: Vector<T, N>) -> Self::Output {
+        let mut data = self.data.clone();
+        let len = self.data.len() - 1;
+
+        for i in 0..=len {
+            data[i] = self.data[i] - *rhs.get(i).unwrap();
+        }
+
+        Point { data }
+    }
+}
+
+impl<T: Clone + Copy, const N: usize> Sub for Point<T, N>
 where
     T: Sub<Output = T>,
 {
     type Output = Vector<T, N>;
+
     fn sub(self, rhs: Self) -> Self::Output {
         let mut data = self.data.clone();
         let len = self.data.len() - 1;
@@ -97,25 +116,6 @@ where
         }
         let res = Vector::new(data);
         res
-    }
-}
-
-//Vector - Point = Point
-impl<T, const N: usize> Sub<Vector<T, N>> for Point<T, N>
-where
-    T: Sub<Output = T> + Copy,
-    T: Clone + Copy + Tuple<T>,
-{
-    type Output = Point<T, N>;
-    fn sub(self, rhs: Vector<T, N>) -> Self {
-        let mut data = self.data.clone();
-        let len = self.data.len() - 1;
-
-        for i in 0..=len {
-            data[i] = self.data[i] - *rhs.get(i).unwrap();
-        }
-
-        Point { data }
     }
 }
 
