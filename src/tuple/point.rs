@@ -15,19 +15,22 @@ impl<T, const N: usize> Point<T, N> {
 }
 
 //---------------------------Tuple---------------------------
-
-//f64
-impl<const N: usize> Tuple<f64> for Point<f64, N> {
-    const ZERO: f64 = 0.0;
-
-    fn zero() -> Self {
-        let data = [Self::ZERO; N];
+impl<T, const N: usize> Tuple<T> for Point<T, N>
+where
+    T: Copy,
+{
+    fn initialize(value: T) -> Self {
+        let data = [value; N];
         Point { data }
     }
 
-    fn get<'a>(&'a self, i: usize) -> Option<&'a f64> {
+    fn get<'a>(&'a self, i: usize) -> Option<&'a T>
+    where
+        T: Copy,
+    {
         if i < self.data.len() {
-            return Some(&self.data[i]);
+            let data = &(self.data[i]);
+            return Some(data);
         } else {
             return None;
         }

@@ -38,11 +38,12 @@ impl<T, const N: usize> Vector<T, N> {
 }
 
 //---------------------------Tuple---------------------------
-impl<T: Copy, const N: usize> Tuple<T> for Vector<T, N> {
-    const ZERO: 0.0;
-
-    fn zero() -> Self {
-        let data = [Self::ZERO; N];
+impl<T, const N: usize> Tuple<T> for Vector<T, N>
+where
+    T: Copy,
+{
+    fn initialize(value: T) -> Self {
+        let data = [value; N];
         Vector { data }
     }
 
@@ -51,7 +52,7 @@ impl<T: Copy, const N: usize> Tuple<T> for Vector<T, N> {
         T: Copy,
     {
         if i < self.data.len() {
-            let data = &(self.data[i] as T);
+            let data = &(self.data[i]);
             return Some(data);
         } else {
             return None;
@@ -123,7 +124,7 @@ where
     T: Sub<Output = T>,
 {
     type Output = Point<T, N>;
-    fn sub(self, rhs: Self::Output) -> Self::Output {
+    fn sub(self, rhs: Point<T, N>) -> Point<T, N> {
         let mut data = self.data.clone();
         let len = self.data.len() - 1;
 
