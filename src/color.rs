@@ -1,4 +1,8 @@
 use std::ops::{Add, Div, Mul, Sub};
+
+use std::cmp::PartialEq;
+
+#[derive(Clone, Copy, Debug)]
 pub struct Color {
     red: f64,
     green: f64,
@@ -11,6 +15,11 @@ impl Color {
     }
 }
 
+impl PartialEq for Color {
+    fn eq(&self, other: &Self) -> bool {
+        self.red == other.red && self.green == other.green && self.blue == other.blue
+    }
+}
 impl Sub for Color {
     type Output = Self;
 
