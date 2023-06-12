@@ -28,11 +28,32 @@ mod primitive_operations {
         let p = Point::new_point3(3, 2, 1);
         let v = Vector::new_vec3(5, 6, 7);
 
-        let res = p - v;
+        let mut res = p - v;
+        let expected1 = Point::new_point3(-2, -4, -6);
+        assert_eq!(res, expected1);
 
+        res = v - p;
+        let expected2 = Point::new_point3(2, 4, 6);
+        assert_eq!(res, expected2);
     }
 
+    #[test]
+    fn magnitude() {
+        let mut v = Vector::new_vec3(1.0, 2.0, 3.0);
+        let res = 14.0f64.sqrt();
+        assert_eq!(res, v.magnitude());
 
+        v = Vector::new_vec3(-1.0, -2.0, -3.0);
+        assert_eq!(res, v.magnitude());
+    }
+
+    #[test]
+    fn normalize() {
+        let v = Vector::new_vec3(1.0, 2.0, 3.0);
+        let temp = 14.0f64.sqrt();
+        let res = Vector::new_vec3(1.0 / temp, 2.0 / temp, 3.0 / temp);
+        assert_eq!(res, v.normalize());
+    }
 
     #[test]
     fn cross_product() {
