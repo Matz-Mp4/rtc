@@ -4,14 +4,54 @@ use std::cmp::PartialEq;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Color {
-    red: f64,
-    green: f64,
-    blue: f64,
+    pub red: f64,
+    pub green: f64,
+    pub blue: f64,
 }
 
 impl Color {
     pub fn new(red: f64, green: f64, blue: f64) -> Self {
         Self { red, green, blue }
+    }
+
+    pub fn red() -> Color {
+        Color {
+            red: 1.0,
+            green: 0.0,
+            blue: 0.0,
+        }
+    }
+
+    pub fn green() -> Color {
+        Color {
+            red: 0.0,
+            green: 1.0,
+            blue: 0.0,
+        }
+    }
+
+    pub fn blue() -> Color {
+        Color {
+            red: 0.0,
+            green: 0.0,
+            blue: 1.0,
+        }
+    }
+
+    pub fn black() -> Color {
+        Color {
+            red: 0.0,
+            green: 0.0,
+            blue: 0.0,
+        }
+    }
+
+    pub fn white() -> Color {
+        Color {
+            red: 1.0,
+            green: 1.0,
+            blue: 1.0,
+        }
     }
 }
 
