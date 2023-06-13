@@ -1,6 +1,7 @@
 use std::cmp::PartialEq;
 use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
 
+use super::super::ApproximateEq;
 use super::point::Point;
 use super::tuple::Tuple;
 use super::utils::Sqrt;
@@ -81,9 +82,17 @@ impl<T> Vector<T, 3> {
 }
 
 //---------------------------OverLoad---------------------------
-impl<T: PartialEq, const N: usize> PartialEq for Vector<T, N> {
+impl<T: ApproximateEq + PartialEq, const N: usize> PartialEq for Vector<T, N> {
     fn eq(&self, other: &Self) -> bool {
-        self.data == other.data
+        let mut res = false;
+        let len = self.data.len() - 1;
+        for i in 0..=len {
+            res = self.data[i].approx_eq_low(&other.data[i]);
+            if !res {
+                break;
+            }
+        }
+        res
     }
 }
 

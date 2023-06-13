@@ -32,3 +32,4 @@ impl Sqrt<f32> for f32 {
         value.sqrt()
     }
 }
+

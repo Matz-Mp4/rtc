@@ -1,6 +1,6 @@
-use std::ops::{Add, Div, Mul, Sub};
-
+use super::ApproximateEq;
 use std::cmp::PartialEq;
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Color {
@@ -57,7 +57,9 @@ impl Color {
 
 impl PartialEq for Color {
     fn eq(&self, other: &Self) -> bool {
-        self.red == other.red && self.green == other.green && self.blue == other.blue
+        self.red.approx_eq_low(&other.red)
+            && self.green.approx_eq_low(&other.green)
+            && self.blue.approx_eq_low(&other.blue)
     }
 }
 impl Sub for Color {
