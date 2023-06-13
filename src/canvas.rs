@@ -1,5 +1,5 @@
 use super::color::Color;
-use image::ColorType;
+use std::fs::File;
 use std::ops::{Index, IndexMut};
 
 pub struct Canvas {
@@ -21,8 +21,9 @@ impl Canvas {
         self.pixels.push(pixel);
     }
 
-    pub fn gen_png(&self, path: &str) -> image::ImageResult<()> {
+    pub fn gen_png(&self, file_name: &str) -> image::ImageResult<()> {
         let mut img = image::ImageBuffer::new(self.width as u32, self.height as u32);
+        let _output = File::create(file_name);
 
         for (x, y, pixel) in img.enumerate_pixels_mut() {
             let color = &self[y as usize][x as usize];
@@ -33,7 +34,7 @@ impl Canvas {
             *pixel = image::Rgb([r, g, b]);
         }
 
-        img.save(path)
+        img.save(file_name)
     }
 }
 
