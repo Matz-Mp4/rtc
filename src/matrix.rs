@@ -8,6 +8,7 @@ pub struct Matrix<T, const N: usize, const M: usize> {
     data: Mtx<T, N, M>,
 }
 
+
 impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
     pub fn new() -> Self
     where
@@ -16,6 +17,18 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         Self {
             data: Default::default(),
         }
+    }
+
+    pub fn from(data: Mtx<T, N, M>) -> Self {
+        Self { data }
+    }
+
+    pub fn trans(&self) -> Self {
+        todo!()
+    }
+
+    pub fn iden() -> Matrix<T, N, M> {
+        todo!();
     }
 }
 
