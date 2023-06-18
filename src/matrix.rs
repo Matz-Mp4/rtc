@@ -75,6 +75,28 @@ where
     }
 }
 
+impl<T: Copy, const N: usize, const M: usize, const P: usize> Mul<Matrix<T, M, P>>
+    for Matrix<T, N, M>
+where
+    T: Mul<Output = T> + Add<Output = T>,
+    Mtx<T, N, P>: Default,
+{
+    type Output = Matrix<T, N, P>;
+
+    fn mul(self, rhs: Matrix<T, M, P>) -> Self::Output {
+        let mut res: Matrix<T, N, P> = Matrix::new();
+
+        for i in 0..N {
+            for j in 0..P {
+                for k in 0..M {
+                    res.data[i][j] = res.data[i][j] + self.data[i][k] * rhs.data[k][j];
+                }
+            }
+        }
+        res
+    }
+}
+
 //Scalar
 impl<T: Copy, const N: usize, const M: usize> Mul<T> for Matrix<T, N, M>
 where
