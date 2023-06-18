@@ -1,5 +1,5 @@
 use super::color::Color;
-use std::fs::File;
+use std::fs::{self, File};
 use std::ops::{Index, IndexMut};
 
 pub struct Canvas {
@@ -13,7 +13,7 @@ impl Canvas {
         Self {
             width,
             height,
-            pixels: vec![Color::red(); width * height],
+            pixels: vec![Color::white(); width * height],
         }
     }
 
@@ -21,21 +21,44 @@ impl Canvas {
         self.pixels.push(pixel);
     }
 
-    pub fn gen_png(&self, file_name: &str) -> image::ImageResult<()> {
-        let mut img = image::ImageBuffer::new(self.width as u32, self.height as u32);
-        let _output = File::create(file_name);
+    pub fn convernt_to_ppm(&self, file_name: &str) -> Result<File, std::io::Error> {
+        let image = File::create(file_name);
+        let mut content = String::new();
+        //Header
+        content.push_str("P3\n");
+        content.push_str(self.width.to_string().as_str());
+        content.push(' ');
+        content.push_str(self.height.to_string().as_str());
+        content.push_str("\n255\n");
 
-        for (x, y, pixel) in img.enumerate_pixels_mut() {
-            let color = &self[y as usize][x as usize];
-            let r = scale_color(color.red);
-            let g = scale_color(color.green);
-            let b = scale_color(color.blue);
-
-            *pixel = image::Rgb([r, g, b]);
+        for i in 0..self.height {
+            for j in 0..self.width {
+                let mut temp = color_into_pixel(&self[i][j]);
+                if j < self.width - 1 {
+                    temp.push(' ');
+                } else {
+                    temp.push('\n');
+                }
+                content.push_str(temp.as_str());
+            }
         }
-
-        img.save(file_name)
+        fs::write(file_name, content)?;
+        image
     }
+}
+
+fn color_into_pixel(color: &Color) -> String {
+    let mut result = String::new();
+    let red = scale_color(color.red);
+    let blue = scale_color(color.blue);
+    let green = scale_color(color.green);
+    result.push_str(red.to_string().as_str());
+    result.push(' ');
+    result.push_str(green.to_string().as_str());
+    result.push(' ');
+    result.push_str(blue.to_string().as_str());
+
+    result
 }
 
 fn scale_color(component: f64) -> u8 {
