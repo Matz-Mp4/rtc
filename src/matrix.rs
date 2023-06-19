@@ -36,7 +36,7 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         trans
     }
 
-    pub fn iden(iden_value: T) -> Matrix<T, N, M>
+    pub fn diag(iden_value: T) -> Matrix<T, N, M>
     where
         Mtx<T, N, M>: Default,
         T: Copy + Default,
