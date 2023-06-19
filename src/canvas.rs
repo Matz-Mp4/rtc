@@ -21,7 +21,7 @@ impl Canvas {
         self.pixels.push(pixel);
     }
 
-    pub fn convernt_to_ppm(&self, file_name: &str) -> Result<File, std::io::Error> {
+    pub fn convert_to_ppm(&self, file_name: &str) -> Result<File, std::io::Error> {
         let image = File::create(file_name);
         let mut content = String::new();
         //Header

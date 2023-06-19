@@ -8,7 +8,6 @@ pub struct Matrix<T, const N: usize, const M: usize> {
     data: Mtx<T, N, M>,
 }
 
-
 impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
     pub fn new() -> Self
     where
@@ -23,12 +22,35 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         Self { data }
     }
 
-    pub fn trans(&self) -> Self {
-        todo!()
+    pub fn trans(&self) -> Matrix<T, M, N>
+    where
+        Mtx<T, M, N>: Default,
+        T: Copy,
+    {
+        let mut trans: Matrix<T, M, N> = Matrix::new();
+        for j in 0..M {
+            for i in 0..N {
+                trans.data[j][i] = self.data[i][j];
+            }
+        }
+        trans
     }
 
-    pub fn iden() -> Matrix<T, N, M> {
-        todo!();
+    pub fn iden(iden_value: T) -> Matrix<T, N, M>
+    where
+        Mtx<T, N, M>: Default,
+        T: Copy + Default,
+    {
+        let mut iden: Matrix<T, N, M> = Matrix::new();
+
+        for i in 0..N {
+            for j in 0..M {
+                if i == j {
+                    iden.data[i][j] = iden_value;
+                }
+            }
+        }
+        iden
     }
 }
 
