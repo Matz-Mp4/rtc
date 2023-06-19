@@ -52,6 +52,37 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         }
         iden
     }
+
+    //returns a copy of the given matrix
+    //with the given row and col removed.
+    pub fn sub_matrix<const Q: usize, const R: usize>(
+        &self,
+        row: usize,
+        col: usize,
+    ) -> Matrix<T, Q, R>
+    where
+        Mtx<T, Q, R>: Default,
+        T: Copy,
+    {
+        let mut sub_matrix: Matrix<T, Q, R> = Matrix::new();
+        let mut q = 0;
+        let mut r = 0;
+
+        for i in 0..N {
+            if i != row {
+                for j in 0..M {
+                    if j != col {
+                        sub_matrix.data[q][r] = self.data[i][j];
+                        r += 1;
+                    }
+                }
+                q += 1;
+                r = 0;
+            }
+        }
+
+        sub_matrix
+    }
 }
 
 //---------------------------OverLoad---------------------------

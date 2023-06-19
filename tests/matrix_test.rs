@@ -45,4 +45,13 @@ mod primitive_operations {
 
         assert_eq!(expected, res);
     }
+
+    #[test]
+    fn sub_matrix() {
+        let matx1 = Matrix::from([[1, 5, 0], [-3, 2, 7], [0, 6, -3]]);
+        let expected = Matrix::from([[-3, 2], [0, 6]]);
+        let res: Matrix<i32, 2, 2> = matx1.sub_matrix(0, 2);
+
+        assert_eq!(expected, res);
+    }
 }
