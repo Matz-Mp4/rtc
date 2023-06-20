@@ -8,6 +8,12 @@ pub struct Matrix<T, const N: usize, const M: usize> {
     data: Mtx<T, N, M>,
 }
 
+impl<T, const N: usize> Matrix<T, N, N> {
+    pub fn det(&self) -> T {
+        todo!();
+    }
+}
+
 impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
     pub fn new() -> Self
     where
@@ -52,7 +58,6 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         }
         iden
     }
-
     //returns a copy of the given matrix
     //with the given row and col removed.
     pub fn sub_matrix<const Q: usize, const R: usize>(
