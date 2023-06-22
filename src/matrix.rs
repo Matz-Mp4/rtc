@@ -10,9 +10,7 @@ pub struct Matrix<T, const N: usize, const M: usize> {
     data: Mtx<T, N, M>,
 }
 
-impl<T: Zero + Copy, const N: usize, const M: usize> Zero for Mtx<T, N, M>
-where
-{
+impl<T: Zero + Copy, const N: usize, const M: usize> Zero for Mtx<T, N, M> {
     fn zero() -> Self {
         let data: Mtx<T, N, M> = [[Zero::zero(); M]; N];
         data
@@ -28,9 +26,9 @@ impl<T, const N: usize> Matrix<T, N, N> {
 impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
     pub fn new() -> Self
     where
-        T: Zero + Sized + Copy,
+        T: Zero + Copy,
     {
-        let data: Mtx<T, N, M> = [[Zero::zero(); M]; N];
+        let data: Mtx<T, N, M> = Zero::zero();
 
         Self { data }
     }
