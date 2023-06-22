@@ -14,6 +14,7 @@ macro_rules! default_impl_zero {
         }
     };
 }
+
 default_impl_zero! { usize, 0 }
 default_impl_zero! { i8, 0 }
 default_impl_zero! { i16, 0 }

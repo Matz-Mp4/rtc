@@ -31,7 +31,7 @@ mod primitive_operations {
     #[test]
     fn iden() {
         let matx1 = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 8, 7, 6], [5, 4, 3, 2]]);
-        let iden = Matrix::diag(1);
+        let iden = Matrix::iden();
         let res = matx1 * iden;
 
         assert_eq!(matx1, res);

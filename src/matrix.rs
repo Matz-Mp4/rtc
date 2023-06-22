@@ -52,18 +52,18 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         trans
     }
 
-    pub fn diag(iden_value: T) -> Matrix<T, N, M>
+    pub fn iden() -> Matrix<T, N, M>
     where
         Mtx<T, N, M>: Zero,
         T: Copy + Default,
-        T: Zero,
+        T: Zero + One,
     {
         let mut iden: Matrix<T, N, M> = Matrix::new();
 
         for i in 0..N {
             for j in 0..M {
                 if i == j {
-                    iden.data[i][j] = iden_value;
+                    iden.data[i][j] = One::one();
                 }
             }
         }
