@@ -1,4 +1,6 @@
-use crate::ApproximateEq;
+use super::ApproximateEq;
+use super::One;
+use super::Zero;
 use std::ops::{Add, Div, Mul, Sub};
 
 type Mtx<T, const N: usize, const M: usize> = [[T; M]; N];
@@ -6,6 +8,15 @@ type Mtx<T, const N: usize, const M: usize> = [[T; M]; N];
 #[derive(Clone, Copy, Debug)]
 pub struct Matrix<T, const N: usize, const M: usize> {
     data: Mtx<T, N, M>,
+}
+
+impl<T: Zero + Copy, const N: usize, const M: usize> Zero for Mtx<T, N, M>
+where
+{
+    fn zero() -> Self {
+        let data: Mtx<T, N, M> = [[Zero::zero(); M]; N];
+        data
+    }
 }
 
 impl<T, const N: usize> Matrix<T, N, N> {
@@ -17,11 +28,11 @@ impl<T, const N: usize> Matrix<T, N, N> {
 impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
     pub fn new() -> Self
     where
-        Mtx<T, N, M>: Default,
+        T: Zero + Sized + Copy,
     {
-        Self {
-            data: Default::default(),
-        }
+        let data: Mtx<T, N, M> = [[Zero::zero(); M]; N];
+
+        Self { data }
     }
 
     pub fn from(data: Mtx<T, N, M>) -> Self {
@@ -30,8 +41,9 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
 
     pub fn trans(&self) -> Matrix<T, M, N>
     where
-        Mtx<T, M, N>: Default,
+        Mtx<T, M, N>: Zero,
         T: Copy,
+        T: Zero,
     {
         let mut trans: Matrix<T, M, N> = Matrix::new();
         for j in 0..M {
@@ -44,8 +56,9 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
 
     pub fn diag(iden_value: T) -> Matrix<T, N, M>
     where
-        Mtx<T, N, M>: Default,
+        Mtx<T, N, M>: Zero,
         T: Copy + Default,
+        T: Zero,
     {
         let mut iden: Matrix<T, N, M> = Matrix::new();
 
@@ -66,8 +79,7 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
         col: usize,
     ) -> Matrix<T, Q, R>
     where
-        Mtx<T, Q, R>: Default,
-        T: Copy,
+        T: Zero + Copy,
     {
         let mut sub_matrix: Matrix<T, Q, R> = Matrix::new();
         let mut q = 0;
@@ -109,7 +121,7 @@ impl<T: ApproximateEq + PartialEq, const N: usize, const M: usize> PartialEq for
 impl<T: Copy, const N: usize, const M: usize> Add for Matrix<T, N, M>
 where
     T: Add<Output = T>,
-    Mtx<T, N, M>: Default,
+    T: Zero,
 {
     type Output = Self;
 
@@ -129,7 +141,7 @@ where
 impl<T: Copy, const N: usize, const M: usize> Sub for Matrix<T, N, M>
 where
     T: Add<Output = T>,
-    Mtx<T, N, M>: Default,
+    T: Zero,
 {
     type Output = Self;
 
@@ -150,7 +162,7 @@ impl<T: Copy, const N: usize, const M: usize, const P: usize> Mul<Matrix<T, M, P
     for Matrix<T, N, M>
 where
     T: Mul<Output = T> + Add<Output = T>,
-    Mtx<T, N, P>: Default,
+    T: Zero,
 {
     type Output = Matrix<T, N, P>;
 
@@ -172,7 +184,7 @@ where
 impl<T: Copy, const N: usize, const M: usize> Mul<T> for Matrix<T, N, M>
 where
     T: Mul<Output = T>,
-    Mtx<T, N, M>: Default,
+    T: Zero,
 {
     type Output = Self;
 
@@ -193,7 +205,7 @@ where
 impl<T: Copy, const N: usize, const M: usize> Div<T> for Matrix<T, N, M>
 where
     T: Div<Output = T>,
-    Mtx<T, N, M>: Default,
+    T: Zero,
 {
     type Output = Self;
 

@@ -8,6 +8,8 @@ pub use matrix::Matrix;
 
 pub mod utils;
 pub use utils::ApproximateEq;
+pub use utils::One;
+pub use utils::Zero;
 
 pub mod canvas;
 pub use canvas::Canvas;
