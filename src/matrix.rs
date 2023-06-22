@@ -54,8 +54,7 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
 
     pub fn iden() -> Matrix<T, N, M>
     where
-        Mtx<T, N, M>: Zero,
-        T: Copy + Default,
+        T: Copy,
         T: Zero + One,
     {
         let mut iden: Matrix<T, N, M> = Matrix::new();
