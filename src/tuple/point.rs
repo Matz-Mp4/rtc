@@ -9,7 +9,7 @@ pub struct Point<T, const N: usize> {
 }
 
 impl<T, const N: usize> Point<T, N> {
-    pub fn new(data: [T; N]) -> Self {
+    pub fn from(data: [T; N]) -> Self {
         Self { data }
     }
 }
@@ -19,9 +19,8 @@ impl<T, const N: usize> Tuple<T> for Point<T, N>
 where
     T: Copy,
 {
-    fn initialize(value: T) -> Self {
-        let data = [value; N];
-        Point { data }
+    fn new() -> Self {
+        Point::new()
     }
 
     fn get<'a>(&'a self, i: usize) -> Option<&'a T>
@@ -87,6 +86,7 @@ where
 impl<T, const N: usize> Sub<Vector<T, N>> for Point<T, N>
 where
     T: Sub<Output = T> + Copy,
+    Vector<T, N>: Tuple<T>,
 {
     type Output = Point<T, N>;
     fn sub(self, rhs: Vector<T, N>) -> Self::Output {
@@ -114,7 +114,7 @@ where
         for i in 0..=len {
             data[i] = self.data[i] - rhs.data[i];
         }
-        let res = Vector::new(data);
+        let res = Vector::from(data);
         res
     }
 }

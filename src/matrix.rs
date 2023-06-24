@@ -1,3 +1,6 @@
+use crate::Tuple;
+use crate::Vector;
+
 use super::ApproximateEq;
 use super::One;
 use super::Zero;
@@ -155,6 +158,7 @@ where
     }
 }
 
+//Matrix
 impl<T: Copy, const N: usize, const M: usize, const P: usize> Mul<Matrix<T, M, P>>
     for Matrix<T, N, M>
 where
@@ -173,6 +177,31 @@ where
                 }
             }
         }
+        res
+    }
+}
+
+//Vector
+impl<T: Copy, const N: usize, const M: usize> Mul<Vector<T, N>> for Matrix<T, N, M>
+where
+    T: Mul<Output = T> + Add<Output = T>,
+    T: Zero,
+{
+    type Output = Vector<T, N>;
+
+    fn mul(self, rhs: Vector<T, N>) -> Self::Output {
+        let res: Vector<T, N> = Vector::new();
+
+        for i in 0..N {
+            for j in 0..M {
+                for k in 0..N {
+                    let res_data = res.get_mut(i).unwrap();
+                    let rhs_data = *(rhs.get(k).unwrap());
+                    *res_data = *res_data + self.data[i][j] * rhs_data;
+                }
+            }
+        }
+
         res
     }
 }

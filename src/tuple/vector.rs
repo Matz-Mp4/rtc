@@ -2,6 +2,7 @@ use std::cmp::PartialEq;
 use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
 
 use super::super::ApproximateEq;
+use super::super::Zero;
 use super::point::Point;
 use super::tuple::Tuple;
 use super::utils::Sqrt;
@@ -12,7 +13,16 @@ pub struct Vector<T, const N: usize> {
 }
 
 impl<T, const N: usize> Vector<T, N> {
-    pub fn new(data: [T; N]) -> Self {
+    pub fn new() -> Self
+    where
+        T: Copy + Zero,
+    {
+        let data: [T; N] = [Zero::zero(); N];
+
+        Self { data }
+    }
+
+    pub fn from(data: [T; N]) -> Self {
         Self { data }
     }
 }
@@ -44,11 +54,10 @@ impl<T: Sqrt<Output = T>, const N: usize> Vector<T, N> {
 //---------------------------Tuple---------------------------
 impl<T, const N: usize> Tuple<T> for Vector<T, N>
 where
-    T: Copy,
+    T: Zero + Copy,
 {
-    fn initialize(value: T) -> Self {
-        let data = [value; N];
-        Vector { data }
+    fn new() -> Self {
+        Vector::new()
     }
 
     fn get<'a>(&'a self, i: usize) -> Option<&'a T>
@@ -144,7 +153,7 @@ where
             data[i] = self.data[i] - *rhs.get(i).unwrap();
         }
 
-        let res = Point::new(data);
+        let res = Point::from(data);
 
         res
     }
