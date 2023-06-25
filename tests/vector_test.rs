@@ -14,12 +14,12 @@ mod primitive_operations {
 
     #[test]
     fn sub() {
-        let v = Vector::new([1, 2, 3, 4, 5]);
-        let p = Vector::new([5, 4, 3, 2, 1]);
+        let v = Vector::from([1, 2, 3, 4, 5]);
+        let p = Vector::from([5, 4, 3, 2, 1]);
 
         let res = p - v;
 
-        let expected = Vector::new([4, 2, 0, -2, -4]);
+        let expected = Vector::from([4, 2, 0, -2, -4]);
         assert_eq!(res, expected);
     }
 
