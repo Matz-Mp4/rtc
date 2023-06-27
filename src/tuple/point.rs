@@ -15,7 +15,7 @@ impl<T, const N: usize> Point<T, N> {
 }
 
 //---------------------------Tuple---------------------------
-impl<T, const N: usize> Tuple<T> for Point<T, N>
+impl<T, const N: usize> Tuple<T, N> for Point<T, N>
 where
     T: Copy,
 {
@@ -33,6 +33,13 @@ where
         } else {
             return None;
         }
+    }
+
+    fn from(data: [T; N]) -> Self
+    where
+        Self: Sized,
+    {
+        Self { data }
     }
 }
 
@@ -86,7 +93,7 @@ where
 impl<T, const N: usize> Sub<Vector<T, N>> for Point<T, N>
 where
     T: Sub<Output = T> + Copy,
-    Vector<T, N>: Tuple<T>,
+    Vector<T, N>: Tuple<T, N>,
 {
     type Output = Point<T, N>;
     fn sub(self, rhs: Vector<T, N>) -> Self::Output {

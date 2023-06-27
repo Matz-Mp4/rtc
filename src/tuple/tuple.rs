@@ -1,4 +1,4 @@
-pub trait Tuple<T> {
+pub trait Tuple<T: Sized, const N: usize> {
     fn get<'a>(&'a self, i: usize) -> Option<&'a T> {
         None
     }
@@ -7,6 +7,10 @@ pub trait Tuple<T> {
         None
     }
     fn new() -> Self
+    where
+        Self: Sized;
+
+    fn from(data: [T; N]) -> Self
     where
         Self: Sized;
 }

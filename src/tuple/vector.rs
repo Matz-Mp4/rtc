@@ -52,7 +52,7 @@ impl<T: Sqrt<Output = T>, const N: usize> Vector<T, N> {
 }
 
 //---------------------------Tuple---------------------------
-impl<T, const N: usize> Tuple<T> for Vector<T, N>
+impl<T, const N: usize> Tuple<T, N> for Vector<T, N>
 where
     T: Zero + Copy,
 {
@@ -70,6 +70,13 @@ where
         } else {
             return None;
         }
+    }
+
+    fn from(data: [T; N]) -> Self
+    where
+        Self: Sized,
+    {
+        Self { data }
     }
 }
 

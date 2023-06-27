@@ -26,10 +26,10 @@ impl<T, const N: usize> Matrix<T, N, N> {
     }
 }
 
-impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
+impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
     pub fn new() -> Self
     where
-        T: Zero + Copy,
+        T: Zero + Copy + Sized,
     {
         let data: Mtx<T, N, M> = Zero::zero();
 
@@ -38,6 +38,27 @@ impl<T, const N: usize, const M: usize> Matrix<T, N, M> {
 
     pub fn from(data: Mtx<T, N, M>) -> Self {
         Self { data }
+    }
+
+    pub fn get_line(&self, line: usize) -> [&T; M] {
+        //why
+        let mut output = [&self.data[line][0]; M];
+
+        for i in 0..M {
+            output[i] = &self.data[line][i];
+        }
+
+        output
+    }
+
+    pub fn get_row(&self, row: usize) -> [&T; N] {
+        //why
+        let mut output = [&self.data[0][row]; N];
+
+        for i in 0..N {
+            output[i] = &self.data[i][row];
+        }
+        output
     }
 
     pub fn trans(&self) -> Matrix<T, M, N>
