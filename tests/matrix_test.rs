@@ -74,8 +74,21 @@ mod primitive_operations {
     #[test]
     fn det() {
         let matx = Matrix::from([[2, 3, 3, 1], [0, 4, 3, -3], [2, -1, -1, -3], [0, -4, -3, 2]]);
-        let expected = 8;
+        let mut expected = 8;
 
         assert_eq!(expected, matx.det());
+
+        let matx2 = Matrix::from([[-3, 6, 12], [-1, 3, 5], [-1, 9, 25]]);
+        expected = -42;
+
+        assert_eq!(expected, matx2.det());
+    }
+
+    #[test]
+    fn cofactor() {
+        let matx = Matrix::from([[1, 2, 6], [-5, 8, -4], [2, 6, 4]]);
+        let expected = 56;
+
+        assert_eq!(expected, matx.cofactor::<2>(0, 0));
     }
 }
