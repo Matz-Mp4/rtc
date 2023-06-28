@@ -77,7 +77,7 @@ where
     where
         Self: Sized,
     {
-        Self { data }
+        Vector::from(data)
     }
 }
 

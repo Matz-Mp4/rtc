@@ -4,7 +4,7 @@ use crate::Vector;
 use super::ApproximateEq;
 use super::One;
 use super::Zero;
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 type Mtx<T, const N: usize, const M: usize> = [[T; M]; N];
 
@@ -17,12 +17,6 @@ impl<T: Zero + Copy, const N: usize, const M: usize> Zero for Mtx<T, N, M> {
     fn zero() -> Self {
         let data: Mtx<T, N, M> = [[Zero::zero(); M]; N];
         data
-    }
-}
-
-impl<T, const N: usize> Matrix<T, N, N> {
-    pub fn det(&self) -> T {
-        todo!();
     }
 }
 
@@ -176,6 +170,68 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
     }
 }
 
+impl<T, const N: usize> Matrix<T, N, N>
+where
+    T: Copy + Sized + Zero + Mul<Output = T> + One + Div<Output = T> + Sub<Output = T> + PartialEq,
+{
+    pub fn det(&self) -> T {
+        let mut det = One::one();
+        let mut temp_matrix = self.clone();
+
+        for i in 0..N {
+            let mut search = i;
+            let max;
+
+            if temp_matrix.data[i][i] == Zero::zero() {
+                while temp_matrix.data[i][search] == Zero::zero() && search < N {
+                    search += 1;
+                }
+
+                if search < N {
+                    for j in 0..N {
+                        let swap = temp_matrix.data[j][search];
+                        temp_matrix.data[j][search] = temp_matrix.data[j][i];
+                        temp_matrix.data[j][i] = swap;
+                    }
+                } else {
+                    return Zero::zero();
+                }
+            }
+
+            max = temp_matrix.data[i][i];
+            det = max * det;
+
+            for j in (i..N).rev() {
+                temp_matrix.data[j][i] = temp_matrix.data[j][i] / max;
+                for k in (i + 1)..N {
+                    temp_matrix.data[j][k] =
+                        temp_matrix.data[j][k] - (temp_matrix.data[j][i] * temp_matrix.data[i][k]);
+                }
+            }
+        }
+
+        det
+    }
+
+    pub fn cofactor<const Q: usize>(&self, row: usize, col: usize) -> T
+    where
+        T: Zero + Copy + One + Neg<Output = T>,
+    {
+        let mut cofact = Zero::zero();
+
+        if row <= N && col <= N {
+            let minor: Matrix<T, Q, Q> = self.sub_matrix(row, col);
+            cofact = minor.det();
+
+            //Based
+            if ((row + col) & 1) == 1 {
+                cofact = -cofact;
+            }
+        }
+        cofact
+    }
+}
+
 //---------------------------OverLoad---------------------------
 impl<T: ApproximateEq + PartialEq, const N: usize, const M: usize> PartialEq for Matrix<T, N, M> {
     fn eq(&self, other: &Self) -> bool {
@@ -317,7 +373,6 @@ where
                 res.data[i][j] = self.data[i][j] / rhs;
             }
         }
-
         res
     }
 }
