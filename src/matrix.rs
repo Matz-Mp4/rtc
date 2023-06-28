@@ -40,25 +40,78 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
         Self { data }
     }
 
-    pub fn get_line(&self, line: usize) -> [&T; M] {
+    pub fn get_row(&self, row: usize) -> [&T; M] {
         //why
-        let mut output = [&self.data[line][0]; M];
+        let mut output = [&self.data[row][0]; M];
 
         for i in 0..M {
-            output[i] = &self.data[line][i];
+            output[i] = &self.data[row][i];
         }
 
         output
     }
 
-    pub fn get_row(&self, row: usize) -> [&T; N] {
+    pub fn get_col(&self, col: usize) -> [&T; N] {
         //why
-        let mut output = [&self.data[0][row]; N];
+        let mut output = [&self.data[0][col]; N];
 
         for i in 0..N {
-            output[i] = &self.data[i][row];
+            output[i] = &self.data[i][col];
         }
         output
+    }
+
+    pub fn row_reduce(&mut self) -> Matrix<T, N, M>
+    where
+        T: Zero + Copy + Sized + PartialEq + Mul<Output = T> + Sub<Output = T> + Div<Output = T>,
+    {
+        let zero = Zero::zero();
+        let mut pivot = 0;
+        let mut matrix_out = self.clone();
+
+        'outer: for r in 0..N {
+            if M <= pivot {
+                break;
+            }
+            let mut i = r;
+
+            while matrix_out.data[i][pivot] == zero {
+                i += 1;
+                if i == N {
+                    i = r;
+                    pivot += 1;
+                    if M == pivot {
+                        pivot = pivot - 1;
+                        break 'outer;
+                    }
+                }
+            }
+            for j in 0..N {
+                let temp = matrix_out.data[r][j];
+                matrix_out.data[r][j] = matrix_out.data[i][j];
+                self.data[i][j] = temp;
+            }
+
+            let div = matrix_out.data[r][pivot];
+            if div != zero {
+                for j in 0..M {
+                    matrix_out.data[i][j] = matrix_out.data[r][j] / div;
+                }
+            }
+
+            for j in 0..N {
+                if j != r {
+                    let hold = matrix_out.data[j][pivot];
+                    for k in 0..M {
+                        matrix_out.data[j][k] =
+                            matrix_out.data[j][k] - (hold * matrix_out.data[r][k]);
+                    }
+                }
+            }
+            pivot += 1;
+        }
+
+        matrix_out
     }
 
     pub fn trans(&self) -> Matrix<T, M, N>

@@ -54,4 +54,20 @@ mod primitive_operations {
 
         assert_eq!(expected, res);
     }
+    #[test]
+    fn row_reduce() {
+        let mut matx1 = Matrix::from([
+            [1.0, 2.0, -1.0, -4.0],
+            [2.0, 3.0, -1.0, -11.0],
+            [-2.0, 0.0, -3.0, 22.0],
+        ]);
+
+        let expected = Matrix::from([
+            [1.0, 0.0, 0.0, -8.0],
+            [0.0, 1.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0, -2.0],
+        ]);
+
+        assert_eq!(expected, matx1.row_reduce());
+    }
 }

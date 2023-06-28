@@ -1,3 +1,4 @@
+use core::ops::Deref;
 use std::cmp::PartialEq;
 use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
 
@@ -149,7 +150,7 @@ where
 //Vector - Point = Point
 impl<T: Clone + Copy, const N: usize> Sub<Point<T, N>> for Vector<T, N>
 where
-    T: Sub<Output = T>,
+    T: Sub<Output = T> + Zero,
 {
     type Output = Point<T, N>;
     fn sub(self, rhs: Point<T, N>) -> Point<T, N> {
@@ -249,5 +250,12 @@ where
         let z = self.data[0] * rhs.data[1] - self.data[1] * rhs.data[0];
 
         Vector { data: [x, y, z] }
+    }
+}
+
+impl<T: Copy + Zero + Sized, const N: usize> Deref for Vector<&T, N> {
+    type Target = Vector<T, N>;
+    fn deref(&self) -> &Self::Target {
+        unsafe { std::mem::transmute(self) }
     }
 }

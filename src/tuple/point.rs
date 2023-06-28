@@ -1,3 +1,4 @@
+use super::super::Zero;
 use super::tuple::Tuple;
 use super::vector::Vector;
 use std::cmp::PartialEq;
@@ -12,12 +13,21 @@ impl<T, const N: usize> Point<T, N> {
     pub fn from(data: [T; N]) -> Self {
         Self { data }
     }
+
+    pub fn new() -> Self
+    where
+        T: Copy + Sized + Zero,
+    {
+        let data: [T; N] = [Zero::zero(); N];
+
+        Point { data }
+    }
 }
 
 //---------------------------Tuple---------------------------
 impl<T, const N: usize> Tuple<T, N> for Point<T, N>
 where
-    T: Copy,
+    T:  Copy + Zero,
 {
     fn new() -> Self {
         Point::new()
