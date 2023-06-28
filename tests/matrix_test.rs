@@ -70,4 +70,12 @@ mod primitive_operations {
 
         assert_eq!(expected, matx1.row_reduce());
     }
+
+    #[test]
+    fn det() {
+        let matx = Matrix::from([[2, 3, 3, 1], [0, 4, 3, -3], [2, -1, -1, -3], [0, -4, -3, 2]]);
+        let expected = 8;
+
+        assert_eq!(expected, matx.det());
+    }
 }
