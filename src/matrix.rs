@@ -172,7 +172,15 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
 
 impl<T, const N: usize> Matrix<T, N, N>
 where
-    T: Copy + Sized + Zero + Mul<Output = T> + One + Div<Output = T> + Sub<Output = T> + PartialEq,
+    T: Copy
+        + Sized
+        + Zero
+        + Mul<Output = T>
+        + One
+        + Div<Output = T>
+        + Sub<Output = T>
+        + PartialEq
+        + std::fmt::Display,
 {
     pub fn det(&self) -> T {
         let mut det = One::one();
@@ -200,6 +208,8 @@ where
 
             max = temp_matrix.data[i][i];
             det = max * det;
+
+            println!("{}", det);
 
             for j in (i..N).rev() {
                 temp_matrix.data[j][i] = temp_matrix.data[j][i] / max;
