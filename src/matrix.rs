@@ -172,15 +172,7 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
 
 impl<T, const N: usize> Matrix<T, N, N>
 where
-    T: Copy
-        + Sized
-        + Zero
-        + Mul<Output = T>
-        + One
-        + Div<Output = T>
-        + Sub<Output = T>
-        + PartialEq
-        + std::fmt::Display,
+    T: Copy + Sized + Zero + Mul<Output = T> + One + Div<Output = T> + Sub<Output = T> + PartialEq,
 {
     pub fn det(&self) -> T {
         let mut det = One::one();
@@ -209,8 +201,6 @@ where
             max = temp_matrix.data[i][i];
             det = max * det;
 
-            println!("{}", det);
-
             for j in (i..N).rev() {
                 temp_matrix.data[j][i] = temp_matrix.data[j][i] / max;
                 for k in (i + 1)..N {
@@ -225,7 +215,7 @@ where
 
     pub fn cofactor<const Q: usize>(&self, row: usize, col: usize) -> T
     where
-        T: Zero + Copy + One + Neg<Output = T>,
+        T: Zero + Copy + Neg<Output = T>,
     {
         let mut cofact = Zero::zero();
 
@@ -233,12 +223,30 @@ where
             let minor: Matrix<T, Q, Q> = self.sub_matrix(row, col);
             cofact = minor.det();
 
-            //Based
             if ((row + col) & 1) == 1 {
                 cofact = -cofact;
             }
         }
         cofact
+    }
+
+    //Q = N - 1
+    //Super Trash
+    pub fn inverse<const Q: usize>(&self) -> Matrix<T, N, N>
+    where
+        T: Zero + Neg<Output = T> + Sized,
+    {
+        let mut output = Matrix::new();
+        let det = self.det();
+
+        for row in 0..N {
+            for col in 0..N {
+                let c = self.cofactor::<Q>(row, col);
+                output.data[col][row] = c / det;
+            }
+        }
+
+        output
     }
 }
 
