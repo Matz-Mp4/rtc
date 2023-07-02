@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod primitive_operations {
-    use rtc::Matrix;
+    use rtc::{Matrix, Vector};
 
     #[test]
     fn eq_and_not_eq() {
@@ -113,5 +113,22 @@ mod primitive_operations {
         ]);
 
         assert_eq!(expected, matx.inverse::<3>());
+    }
+
+    #[test]
+    fn mul_vector() {
+        let matx = Matrix::from([
+            [1.0, 2.0, 3.0, 4.0],
+            [2.0, 4.0, 4.0, 2.0],
+            [8.0, 6.0, 4.0, 1.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]);
+
+        let vec: Vector<f64, 4> = Vector::from([1.0, 2.0, 3.0, 1.0]);
+        let res = matx * vec;
+
+        let expected = Vector::from([18.0, 24.0, 33.0, 1.0]);
+
+        assert_eq!(expected, res);
     }
 }

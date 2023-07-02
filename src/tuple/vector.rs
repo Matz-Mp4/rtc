@@ -73,6 +73,18 @@ where
         }
     }
 
+    fn get_mut<'a>(&'a mut self, i: usize) -> Option<&'a mut T>
+    where
+        T: Copy,
+    {
+        if i < self.data.len() {
+            let data = &mut (self.data[i]);
+            return Some(data);
+        } else {
+            return None;
+        }
+    }
+
     fn from(data: [T; N]) -> Self
     where
         Self: Sized,

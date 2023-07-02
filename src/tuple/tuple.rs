@@ -3,7 +3,7 @@ pub trait Tuple<T: Sized, const N: usize> {
         None
     }
 
-    fn get_mut<'a>(&'a self, _i: usize) -> Option<&'a mut T> {
+    fn get_mut<'a>(&'a mut self, _i: usize) -> Option<&'a mut T> {
         None
     }
     fn new() -> Self

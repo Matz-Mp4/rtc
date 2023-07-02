@@ -330,23 +330,21 @@ where
 }
 
 //Vector
-impl<T: Copy, const N: usize, const M: usize> Mul<Vector<T, N>> for Matrix<T, N, M>
+impl<T: Copy, const N: usize, const M: usize> Mul<Vector<T, M>> for Matrix<T, N, M>
 where
     T: Mul<Output = T> + Add<Output = T>,
     T: Zero,
 {
     type Output = Vector<T, N>;
 
-    fn mul(self, rhs: Vector<T, N>) -> Self::Output {
-        let res: Vector<T, N> = Vector::new();
+    fn mul(self, rhs: Vector<T, M>) -> Self::Output {
+        let mut res: Vector<T, N> = Vector::new();
 
         for i in 0..N {
+            let res_data = res.get_mut(i).unwrap();
             for j in 0..M {
-                for k in 0..N {
-                    let res_data = res.get_mut(i).unwrap();
-                    let rhs_data = *(rhs.get(k).unwrap());
-                    *res_data = *res_data + self.data[i][j] * rhs_data;
-                }
+                let rhs_data = *(rhs.get(j).unwrap());
+                *res_data = *res_data + self.data[i][j] * rhs_data;
             }
         }
 
