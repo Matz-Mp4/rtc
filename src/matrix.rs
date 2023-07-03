@@ -1,3 +1,4 @@
+use crate::Point;
 use crate::Tuple;
 use crate::Vector;
 
@@ -325,6 +326,29 @@ where
                 }
             }
         }
+        res
+    }
+}
+
+//Point
+impl<T: Copy, const N: usize, const M: usize> Mul<Point<T, M>> for Matrix<T, N, M>
+where
+    T: Mul<Output = T> + Add<Output = T>,
+    T: Zero,
+{
+    type Output = Point<T, N>;
+
+    fn mul(self, rhs: Point<T, M>) -> Self::Output {
+        let mut res: Point<T, N> = Point::new();
+
+        for i in 0..N {
+            let res_data = res.get_mut(i).unwrap();
+            for j in 0..M {
+                let rhs_data = *(rhs.get(j).unwrap());
+                *res_data = *res_data + self.data[i][j] * rhs_data;
+            }
+        }
+
         res
     }
 }
