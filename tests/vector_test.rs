@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod primitive_operations {
     use rtc::tuple::{point::Point, vector::Vector};
+    use rtc::ApproximateEq;
 
     #[test]
     fn add() {

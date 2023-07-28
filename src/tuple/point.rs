@@ -1,3 +1,6 @@
+use crate::ApproximateEq;
+
+use super::super::One;
 use super::super::Zero;
 use super::tuple::Tuple;
 use super::vector::Vector;
@@ -27,7 +30,7 @@ impl<T, const N: usize> Point<T, N> {
 //---------------------------Tuple---------------------------
 impl<T, const N: usize> Tuple<T, N> for Point<T, N>
 where
-    T:  Copy + Zero,
+    T: Copy + Zero,
 {
     fn new() -> Self {
         Point::new()
@@ -39,6 +42,18 @@ where
     {
         if i < self.data.len() {
             let data = &(self.data[i]);
+            return Some(data);
+        } else {
+            return None;
+        }
+    }
+
+    fn get_mut<'a>(&'a mut self, i: usize) -> Option<&'a mut T>
+    where
+        T: Copy,
+    {
+        if i < self.data.len() {
+            let data = &mut (self.data[i]);
             return Some(data);
         } else {
             return None;
@@ -60,10 +75,29 @@ impl<T> Point<T, 3> {
     }
 }
 
+impl<T> Point<T, 4>
+where
+    T: Copy + One,
+{
+    pub fn new_point3D(x: T, y: T, z: T) -> Self {
+        Point {
+            data: [x, y, z, One::one()],
+        }
+    }
+}
+
 //---------------------------OverLoad---------------------------
-impl<T: PartialEq, const N: usize> PartialEq for Point<T, N> {
+impl<T: ApproximateEq + PartialEq, const N: usize> PartialEq for Point<T, N> {
     fn eq(&self, other: &Self) -> bool {
-        self.data == other.data
+        let mut res = false;
+        let len = self.data.len() - 1;
+        for i in 0..=len {
+            res = self.data[i].approx_eq_low(&other.data[i]);
+            if !res {
+                break;
+            }
+        }
+        res
     }
 }
 

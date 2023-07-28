@@ -184,7 +184,7 @@ where
             let max;
 
             if temp_matrix.data[i][i] == Zero::zero() {
-                while temp_matrix.data[i][search] == Zero::zero() && search < N {
+                while search < N && temp_matrix.data[i][search] == Zero::zero() {
                     search += 1;
                 }
 
@@ -231,19 +231,23 @@ where
         cofact
     }
 
-    //Q = N - 1
-    //Super Trash
+    ///Q = N - 1
+    ///Super Trash
     pub fn inverse<const Q: usize>(&self) -> Matrix<T, N, N>
     where
-        T: Zero + Neg<Output = T> + Sized,
+        T: Zero + Neg<Output = T> + Sized + ApproximateEq,
     {
         let mut output = Matrix::new();
         let det = self.det();
 
-        for row in 0..N {
-            for col in 0..N {
-                let c = self.cofactor::<Q>(row, col);
-                output.data[col][row] = c / det;
+        if det.approx_eq(&Zero::zero()) {
+            panic!("Non invertible matrix")
+        } else {
+            for row in 0..N {
+                for col in 0..N {
+                    let c = self.cofactor::<Q>(row, col);
+                    output.data[col][row] = c / det;
+                }
             }
         }
 
@@ -331,19 +335,19 @@ where
 }
 
 //Point
-impl<T: Copy, const N: usize, const M: usize> Mul<Point<T, M>> for Matrix<T, N, M>
+impl<T: Copy, const N: usize, const M: usize> Mul<Point<T, N>> for Matrix<T, N, M>
 where
     T: Mul<Output = T> + Add<Output = T>,
     T: Zero,
 {
     type Output = Point<T, N>;
 
-    fn mul(self, rhs: Point<T, M>) -> Self::Output {
+    fn mul(self, rhs: Point<T, N>) -> Self::Output {
         let mut res: Point<T, N> = Point::new();
 
         for i in 0..N {
             let res_data = res.get_mut(i).unwrap();
-            for j in 0..M {
+            for j in 0..N {
                 let rhs_data = *(rhs.get(j).unwrap());
                 *res_data = *res_data + self.data[i][j] * rhs_data;
             }
@@ -354,19 +358,19 @@ where
 }
 
 //Vector
-impl<T: Copy, const N: usize, const M: usize> Mul<Vector<T, M>> for Matrix<T, N, M>
+impl<T: Copy, const N: usize, const M: usize> Mul<Vector<T, N>> for Matrix<T, N, M>
 where
     T: Mul<Output = T> + Add<Output = T>,
     T: Zero,
 {
     type Output = Vector<T, N>;
 
-    fn mul(self, rhs: Vector<T, M>) -> Self::Output {
+    fn mul(self, rhs: Vector<T, N>) -> Self::Output {
         let mut res: Vector<T, N> = Vector::new();
 
         for i in 0..N {
             let res_data = res.get_mut(i).unwrap();
-            for j in 0..M {
+            for j in 0..N {
                 let rhs_data = *(rhs.get(j).unwrap());
                 *res_data = *res_data + self.data[i][j] * rhs_data;
             }
@@ -375,7 +379,6 @@ where
         res
     }
 }
-
 //Scalar
 impl<T: Copy, const N: usize, const M: usize> Mul<T> for Matrix<T, N, M>
 where

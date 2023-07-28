@@ -1,3 +1,4 @@
+use super::super::One;
 use core::ops::Deref;
 use std::cmp::PartialEq;
 use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
@@ -107,6 +108,16 @@ impl<T> Vector<T, 3> {
         let z = self.data[0] * other.data[1] - self.data[1] * other.data[0];
 
         Vector { data: [x, y, z] }
+    }
+}
+impl<T> Vector<T, 4>
+where
+    T: Sized + Zero + Copy,
+{
+    pub fn new_vec3D(x: T, y: T, z: T) -> Self {
+        Vector {
+            data: [x, y, z, Zero::zero()],
+        }
     }
 }
 

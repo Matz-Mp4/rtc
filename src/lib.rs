@@ -15,3 +15,5 @@ pub mod canvas;
 pub use canvas::Canvas;
 
 pub mod color;
+
+pub mod transformation;

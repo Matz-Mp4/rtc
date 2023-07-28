@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod primitive_operations {
-    use rtc::{Matrix, Vector};
+    use rtc::{Matrix, Point, Vector};
 
     #[test]
     fn eq_and_not_eq() {
@@ -98,14 +98,14 @@ mod primitive_operations {
     }
     #[test]
     fn inverse() {
-        let matx = Matrix::from([
+        let mut matx = Matrix::from([
             [8.0, -5.0, 9.0, 2.0],
             [7.0, 5.0, 6.0, 1.0],
             [-6.0, 0.0, 9.0, 6.0],
             [-3.0, 0.0, -9.0, -4.0],
         ]);
 
-        let expected = Matrix::from([
+        let mut expected = Matrix::from([
             [-0.15385, -0.15385, -0.28205, -0.53846],
             [-0.07692, 0.12308, 0.02564, 0.03077],
             [0.35897, 0.35897, 0.43590, 0.92308],
@@ -113,6 +113,42 @@ mod primitive_operations {
         ]);
 
         assert_eq!(expected, matx.inverse::<3>());
+
+        matx = Matrix::from([
+            [9.0, 3.0, 0.0, 9.0],
+            [-5.0, -2.0, -6.0, -3.0],
+            [-4.0, 9.0, 6.0, 4.0],
+            [-7.0, 6.0, 6.0, 2.0],
+        ]);
+
+        expected = Matrix::from([
+            [-0.04074, -0.07778, 0.14444, -0.22222],
+            [-0.07778, 0.03333, 0.36667, -0.33333],
+            [-0.02901, -0.14630, -0.10926, 0.12963],
+            [0.17778, 0.06667, -0.26667, 0.33333],
+        ]);
+
+        assert_eq!(expected, matx.inverse::<3>());
+
+        matx = Matrix::from([
+            [3.0, -9.0, 7.0, 3.0],
+            [3.0, -8.0, 2.0, -9.0],
+            [-4.0, 4.0, 4.0, 1.0],
+            [-6.0, 5.0, -1.0, 1.0],
+        ]);
+
+        let matx2 = Matrix::from([
+            [8.0, 2.0, 2.0, 2.0],
+            [3.0, -1.0, 7.0, 0.0],
+            [7.0, 0.0, 5.0, 4.0],
+            [6.0, -2.0, 0.0, 5.0],
+        ]);
+
+        let matx3 = matx * matx2;
+        expected = matx;
+        let res = matx3 * matx2.inverse::<3>();
+
+        assert_eq!(expected, res);
     }
 
     #[test]
@@ -128,6 +164,30 @@ mod primitive_operations {
         let res = matx * vec;
 
         let expected = Vector::from([18.0, 24.0, 33.0, 1.0]);
+
+        assert_eq!(expected, res);
+
+        let matx2 = Matrix::from([[1.0, 2.0, -3.0], [2.0, 9.0, 0.0], [6.0, -1.0, -2.0]]);
+        let vec2: Vector<f64, 3> = Vector::from([2.0, 3.0, -1.0]);
+        let res2 = matx2 * vec2;
+        let expected2: Vector<f64, 3> = Vector::from([11.0, 31.0, 11.0]);
+
+        assert_eq!(expected2, res2);
+    }
+
+    #[test]
+    fn mul_point() {
+        let matx = Matrix::from([
+            [1.0, 2.0, 3.0, 4.0],
+            [2.0, 4.0, 4.0, 2.0],
+            [8.0, 6.0, 4.0, 1.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]);
+
+        let vec: Point<f64, 4> = Point::from([1.0, 2.0, 3.0, 1.0]);
+        let res = matx * vec;
+
+        let expected = Point::from([18.0, 24.0, 33.0, 1.0]);
 
         assert_eq!(expected, res);
     }
