@@ -10,6 +10,7 @@ mod ray_test {
         let point = Point::new_point3D(2.0, 3.0, 4.0);
         let vector = Vector::new_vec3D(1.0, 0.0, 0.0);
 
+        
         let ray = Ray::new(point, vector);
 
         assert_eq!(Point::new_point3D(2.0, 3.0, 4.0), ray.position(0.0));

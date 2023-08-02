@@ -5,7 +5,10 @@ use crate::{Point, Ray};
 pub struct Sphere {}
 
 impl Sphere {
-    pub fn intersection(ray: &Ray) -> Option<(f64, f64)> {
+    pub fn new() -> Self {
+        Sphere {}
+    }
+    pub fn intersect(ray: &Ray) -> Option<(f64, f64)> {
         let sphere_to_ray = ray.origin - Point::new_point3D(0.0, 0.0, 0.0);
         let a = ray.direction * ray.direction;
         let b = ray.direction * sphere_to_ray;
