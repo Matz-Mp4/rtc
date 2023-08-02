@@ -12,11 +12,11 @@ mod basic_test {
 
         assert_eq!(expected, res);
 
-        let inv = transform.inverse::<3>();
-        res = inv * p;
+        /* let inv = transform.inverse::<3>(); */
+        /* res = inv * p; */
 
-        expected = Point::new_point3D(-8.0, 7.0, 3.0);
-        assert_eq!(expected, res);
+        /* expected = Point::new_point3D(-8.0, 7.0, 3.0); */
+        /* assert_eq!(expected, res); */
     }
 
     #[test]

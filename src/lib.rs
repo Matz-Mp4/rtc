@@ -16,4 +16,9 @@ pub use canvas::Canvas;
 
 pub mod color;
 
+pub mod shapes;
+pub use shapes::Sphere;
+
 pub mod transformation;
+pub mod ray;
+pub use ray::Ray;

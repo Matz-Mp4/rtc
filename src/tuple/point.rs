@@ -152,6 +152,25 @@ where
     }
 }
 
+//Vector + Point = Point
+impl<T, const N: usize> Add<Vector<T, N>> for Point<T, N>
+where
+    T: Add<Output = T> + Copy,
+    Vector<T, N>: Tuple<T, N>,
+{
+    type Output = Point<T, N>;
+    fn add(self, rhs: Vector<T, N>) -> Self::Output {
+        let mut data = self.data.clone();
+        let len = self.data.len() - 1;
+
+        for i in 0..=len {
+            data[i] = self.data[i] + *rhs.get(i).unwrap();
+        }
+
+        Point { data }
+    }
+}
+
 impl<T: Clone + Copy, const N: usize> Sub for Point<T, N>
 where
     T: Sub<Output = T>,
