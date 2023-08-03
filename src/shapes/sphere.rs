@@ -1,3 +1,4 @@
+use super::Shape;
 use crate::{Point, Ray};
 
 // We assume a sphere is always at Position{0, 0 , 0}, thus the absence of coordinates.

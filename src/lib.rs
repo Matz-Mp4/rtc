@@ -18,7 +18,13 @@ pub mod color;
 
 pub mod shapes;
 pub use shapes::Sphere;
+pub use shapes::Shape;
 
 pub mod transformation;
 pub mod ray;
 pub use ray::Ray;
+
+pub mod intersection;
+
+pub mod object;
+pub use object::Object;
