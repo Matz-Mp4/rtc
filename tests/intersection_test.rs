@@ -8,9 +8,8 @@ mod inter_test {
 
     #[test]
     fn all_inter_are_positive() {
-        let s = Shape::Sphere;
-        let i1 = Intersection::new(1.0, Object::new(s));
-        let i2 = Intersection::new(2.0, Object::new(s));
+        let i1 = Intersection::new(1.0, Object::new_sphere());
+        let i2 = Intersection::new(2.0, Object::new_sphere());
         let mut inters = Intersections::new();
         inters.add(i1);
         inters.add(i2);
@@ -20,9 +19,8 @@ mod inter_test {
 
     #[test]
     fn when_some_inter_are_negative() {
-        let s = Shape::Sphere;
-        let i1 = Intersection::new(-1.0, Object::new(s));
-        let i2 = Intersection::new(1.0, Object::new(s));
+        let i1 = Intersection::new(-1.0, Object::new_sphere());
+        let i2 = Intersection::new(1.0, Object::new_sphere());
         let mut inters = Intersections::new();
         inters.add(i1);
         inters.add(i2);
@@ -32,9 +30,8 @@ mod inter_test {
 
     #[test]
     fn all_inter_are_negative() {
-        let s = Shape::Sphere;
-        let i1 = Intersection::new(-1.0, Object::new(s));
-        let i2 = Intersection::new(-2.0, Object::new(s));
+        let i1 = Intersection::new(-1.0, Object::new_sphere());
+        let i2 = Intersection::new(-2.0, Object::new_sphere());
         let mut inters = Intersections::new();
         inters.add(i1);
         inters.add(i2);
@@ -44,11 +41,10 @@ mod inter_test {
 
     #[test]
     fn the_hit_is_always_the_lowest_nonnegative() {
-        let s = Shape::Sphere;
-        let i1 = Intersection::new(5.0, Object::new(s));
-        let i2 = Intersection::new(7.0, Object::new(s));
-        let i3 = Intersection::new(-3.0, Object::new(s));
-        let i4 = Intersection::new(2.0, Object::new(s));
+        let i1 = Intersection::new(5.0, Object::new_sphere());
+        let i2 = Intersection::new(7.0, Object::new_sphere());
+        let i3 = Intersection::new(-3.0, Object::new_sphere());
+        let i4 = Intersection::new(2.0, Object::new_sphere());
         let mut inters = Intersections::new();
         inters.add(i1);
         inters.add(i2);
@@ -56,5 +52,9 @@ mod inter_test {
         inters.add(i4);
 
         assert_eq!(Some(&i4), inters.hit());
+    }
+
+    #[test]
+    fn interesecting_a_scaled_sphere() {
     }
 }

@@ -1,6 +1,6 @@
-use crate::{Point, Tuple, Vector};
+use crate::{Matrix, Point, Tuple, Vector};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ray {
     pub origin: Point<f64, 4>,
     pub direction: Vector<f64, 4>,
@@ -19,6 +19,13 @@ impl Ray {
         Self {
             origin: Point::new_point3D(p_x, p_y, p_z),
             direction: Vector::new_vec3D(v_x, v_y, v_z),
+        }
+    }
+
+    pub fn transform(&self, transformation: &Matrix<f64, 4, 4>) -> Ray {
+        Ray {
+            origin: *transformation * self.origin,
+            direction: *transformation * self.direction,
         }
     }
 
