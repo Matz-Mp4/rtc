@@ -25,6 +25,8 @@ pub mod ray;
 pub use ray::Ray;
 
 pub mod intersection;
+pub use intersection::Intersection;
+pub use intersection::Intersections;
 
 pub mod object;
 pub use object::Object;

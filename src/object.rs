@@ -1,6 +1,6 @@
 use crate::Shape;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Object {
     pub shape: Shape,
 }

@@ -1,6 +1,6 @@
 use crate::{Ray, Sphere};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Shape {
     Sphere,
 }
