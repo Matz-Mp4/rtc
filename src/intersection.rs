@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use crate::ApproximateEq;
 use crate::{Object, Ray};
 
@@ -56,19 +58,35 @@ impl Intersections {
         self.intersections.get(i)
     }
 
-    pub fn hit(&self) -> Option<&Intersection> {
-        if let Some(mut value) = self.intersections.get(0) {
-            for inter in &self.intersections {
-                if value.t >= inter.t {
-                    value = inter;
-                }
-            }
+    pub fn sort(&mut self) {
+        self.intersections.sort_unstable();
+    }
 
-            if value.t > 0.0 {
-                return Some(value);
-            }
+    pub fn hit(&mut self) -> Option<&Intersection> {
+        self.intersections.sort_unstable();
+        self.intersections.iter().find(|i| i.t >= 0.0)
+    }
+}
+
+impl PartialOrd for Intersection {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl std::cmp::Eq for Intersection {}
+
+impl Ord for Intersection {
+    fn cmp(&self, other: &Self) -> Ordering {
+        if self.t.is_nan() {
+            Ordering::Greater
+        } else if other.t.is_nan() {
+            Ordering::Less
+        } else if self.t > other.t {
+            Ordering::Greater
+        } else if self.t < other.t {
+            Ordering::Less
+        } else {
+            Ordering::Equal
         }
-
-        None
     }
 }
