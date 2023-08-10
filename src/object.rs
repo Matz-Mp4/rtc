@@ -27,6 +27,7 @@ impl Object {
     pub fn set_transformation(&mut self, transformation: Matrix<f64, 4, 4>) {
         self.transformation = transformation;
         self.inverse_transformation = transformation.inverse::<3>();
+
     }
 
     pub fn intersects(&self, ray: &Ray) -> Option<(f64, f64)> {
