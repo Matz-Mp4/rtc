@@ -112,7 +112,7 @@ mod primitive_operations {
             [-0.69231, -0.69231, -0.76923, -1.92308],
         ]);
 
-        assert_eq!(expected, matx.inverse::<3>());
+        assert_eq!(expected, matx.inverse());
 
         matx = Matrix::from([
             [9.0, 3.0, 0.0, 9.0],
@@ -128,7 +128,7 @@ mod primitive_operations {
             [0.17778, 0.06667, -0.26667, 0.33333],
         ]);
 
-        assert_eq!(expected, matx.inverse::<3>());
+        assert_eq!(expected, matx.inverse());
 
         matx = Matrix::from([
             [3.0, -9.0, 7.0, 3.0],
@@ -146,7 +146,7 @@ mod primitive_operations {
 
         let matx3 = matx * matx2;
         expected = matx;
-        let res = matx3 * matx2.inverse::<3>();
+        let res = matx3 * matx2.inverse();
 
         assert_eq!(expected, res);
     }

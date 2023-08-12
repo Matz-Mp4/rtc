@@ -5,6 +5,7 @@ use crate::Vector;
 use super::ApproximateEq;
 use super::One;
 use super::Zero;
+use std::fmt::Display;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 type Mtx<T, const N: usize, const M: usize> = [[T; M]; N];
@@ -173,7 +174,14 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
 
 impl<T, const N: usize> Matrix<T, N, N>
 where
-    T: Copy + Sized + Zero + Mul<Output = T> + One + Div<Output = T> + Sub<Output = T> + PartialEq,
+    T: Copy
+        + Sized
+        + Zero
+        + Mul<Output = T>
+        + One
+        + Div<Output = T>
+        + Sub<Output = T>
+        + PartialEq
 {
     pub fn det(&self) -> T {
         let mut det = One::one();
@@ -231,44 +239,57 @@ where
         cofact
     }
 
-    pub fn pog_inverse(&mut self)
+    pub fn inverse(&self) -> Matrix<T, N, N>
     where
-        T: Zero + Sized + ApproximateEq,
-        T: Div<Output = T> + Add<Output = T> + Neg<Output = T> + Mul<Output = T>,
+        T: PartialOrd + Display,
     {
+        let mut output = self.clone();
+        let mut iden: Matrix<T, N, N> = Matrix::iden();
+
         let mut ratio: T;
+
+        for i in (1..N).rev() {
+            if output.data[i - 1][0] < output.data[i][0] {
+                let temp = output.data[i].clone();
+                output.data[i] = output.data[i - 1];
+                output.data[i - 1] = temp;
+
+                let temp_2 = iden.data[i].clone();
+                iden.data[i] = iden.data[i - 1];
+                iden.data[i - 1] = temp_2;
+            }
+        }
+
+
         for i in 0..N {
-            for j in 0..2 * N {
-                if j == (i + N) {
-                    self.data[i][j] = One::one();
+            for j in 0..N {
+                if j != i {
+                    let temp = output.data[j][i] / output.data[i][i];
+                    for k in 0..(2 * N) {
+                        if k < N {
+                            output.data[j][k] = output.data[i][k] * temp - output.data[j][k];
+                        } else {
+                            let l = k - N;
+                            iden.data[j][l] = iden.data[i][l] * temp - iden.data[j][l];
+                        }
+                    }
                 }
             }
         }
 
-
-    }
-
-    ///Q = N - 1
-    ///Super Trash
-    pub fn inverse<const Q: usize>(&self) -> Matrix<T, N, N>
-    where
-        T: Zero + Neg<Output = T> + Sized + ApproximateEq,
-    {
-        let mut output = Matrix::new();
-        let det = self.det();
-
-        if det.approx_eq(&Zero::zero()) {
-            panic!("Non invertible matrix")
-        } else {
-            for row in 0..N {
-                for col in 0..N {
-                    let c = self.cofactor::<Q>(row, col);
-                    output.data[col][row] = c / det;
+        for i in 0..N {
+            let temp = output.data[i][i];
+            for j in 0..(2 * N) {
+                if j < N {
+                    output.data[i][j] = output.data[i][j] / temp;
+                } else {
+                    let l = j - N;
+                    iden.data[i][l] = iden.data[i][l] / temp;
                 }
             }
         }
 
-        output
+        iden
     }
 }
 

@@ -10,7 +10,7 @@ pub struct Object {
 
 impl Object {
     pub fn new(shape: Shape, transformation: Matrix<f64, 4, 4>) -> Self {
-        let inverse = transformation.inverse::<3>();
+        let inverse = transformation.inverse();
         let transpose = inverse.trans();
         Self {
             shape,
@@ -30,7 +30,7 @@ impl Object {
     }
 
     pub fn set_transformation(&mut self, transformation: Matrix<f64, 4, 4>) {
-        let inverse = transformation.inverse::<3>();
+        let inverse = transformation.inverse();
         let transpose = inverse.trans();
         self.transformation = transformation;
         self.inverse_transformation = inverse;
