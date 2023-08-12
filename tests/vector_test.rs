@@ -79,6 +79,17 @@ mod primitive_operations {
         let expected = 20;
         assert_eq!(res, expected);
     }
+
+    #[test]
+    fn reflection() {
+        let v = Vector::new_vec3(1.0, -1.0, 0.0);
+        let n = Vector::new_vec3(0.0, 1.0, 0.0);
+        let res = v.reflect(&n);
+
+        let expected = Vector::new_vec3(1.0, 1.0, 0.0);
+
+        assert_eq!(expected, res);
+    }
 }
 
 #[cfg(test)]

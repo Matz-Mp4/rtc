@@ -45,7 +45,7 @@ mod basic_test {
 
         assert_eq!(expected, transform * v);
 
-        let inv = transform.inverse::<3>();
+        let inv = transform.inverse();
         expected = Vector::new_vec3D(-2.0, 2.0, 2.0);
         let res = inv * v;
 
@@ -76,7 +76,7 @@ mod basic_test {
 
         assert_eq!(expected, full_quarter * p);
 
-        let inv = half_quarter.inverse::<3>();
+        let inv = half_quarter.inverse();
 
         expected = Point::new_point3D(0.0, 2.0f64.sqrt() / 2.0, -2.0f64.sqrt() / 2.0);
 
