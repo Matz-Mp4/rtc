@@ -1,5 +1,5 @@
 use super::Shape;
-use crate::{Point, Ray};
+use crate::{Point, Ray, Vector};
 
 // We assume a sphere is always at Position{0, 0 , 0}, thus the absence of coordinates.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -12,11 +12,10 @@ impl Sphere {
     pub fn intersect(ray: &Ray) -> Option<(f64, f64)> {
         let sphere_to_ray = ray.origin - Point::new_point3D(0.0, 0.0, 0.0);
         let a = ray.direction * ray.direction;
-        let b = 2.0 *(ray.direction * sphere_to_ray);
+        let b = 2.0 * (ray.direction * sphere_to_ray);
         let c = (sphere_to_ray * sphere_to_ray) - 1.0;
 
         let discriminat = b.powi(2) - 4.0 * a * c;
-
 
         if discriminat < 0.0 {
             None
@@ -25,5 +24,9 @@ impl Sphere {
             let t2 = (-b + discriminat.sqrt()) / (2.0 * a);
             Some((t1, t2))
         }
+    }
+
+    pub fn normal_at(point: &Point<f64, 4>) -> Vector<f64, 4> {
+        *point - Point::new_point3D(0.0, 0.0, 0.0)
     }
 }

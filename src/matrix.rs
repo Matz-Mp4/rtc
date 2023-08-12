@@ -220,15 +220,32 @@ where
     {
         let mut cofact = Zero::zero();
 
-        if row <= N && col <= N {
+        if row < N && col < N {
             let minor: Matrix<T, Q, Q> = self.sub_matrix(row, col);
             cofact = minor.det();
 
-            if ((row + col) & 1) == 1 {
+            if ((row + col) % 2) == 1 {
                 cofact = -cofact;
             }
         }
         cofact
+    }
+
+    pub fn pog_inverse(&mut self)
+    where
+        T: Zero + Sized + ApproximateEq,
+        T: Div<Output = T> + Add<Output = T> + Neg<Output = T> + Mul<Output = T>,
+    {
+        let mut ratio: T;
+        for i in 0..N {
+            for j in 0..2 * N {
+                if j == (i + N) {
+                    self.data[i][j] = One::one();
+                }
+            }
+        }
+
+
     }
 
     ///Q = N - 1
