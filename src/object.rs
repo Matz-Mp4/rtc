@@ -1,8 +1,9 @@
-use crate::{Matrix, Point, Ray, Shape, Vector};
+use crate::{color::Color, Material, Matrix, Point, Ray, Shape, Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Object {
     pub shape: Shape,
+    pub material: Material,
     transformation: Matrix<f64, 4, 4>,
     inverse_transformation: Matrix<f64, 4, 4>,
     inverse_transpose: Matrix<f64, 4, 4>,
@@ -14,6 +15,7 @@ impl Object {
         let transpose = inverse.trans();
         Self {
             shape,
+            material: Material::default(),
             transformation,
             inverse_transformation: inverse,
             inverse_transpose: transpose,
@@ -21,12 +23,22 @@ impl Object {
     }
 
     pub fn new_sphere() -> Self {
+        let iden = Matrix::iden();
         Self {
             shape: Shape::Sphere,
-            transformation: Matrix::iden(),
-            inverse_transformation: Matrix::iden(),
-            inverse_transpose: Matrix::iden(),
+            material: Material::default(),
+            transformation: iden,
+            inverse_transformation: iden,
+            inverse_transpose: iden,
         }
+    }
+
+    pub fn set_material(&mut self, material: Material) {
+        self.material = material;
+    }
+
+    pub fn set_color(&mut self, color: Color) {
+        self.material.set_color(color);
     }
 
     pub fn set_transformation(&mut self, transformation: Matrix<f64, 4, 4>) {

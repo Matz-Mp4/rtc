@@ -30,3 +30,9 @@ pub use intersection::Intersections;
 
 pub mod object;
 pub use object::Object;
+
+pub mod light;
+pub use light::Light;
+
+pub mod material;
+pub use material::Material;

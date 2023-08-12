@@ -261,7 +261,7 @@ where
     }
 }
 
-//Dot Product
+///Dot Product
 impl<T, const N: usize> Mul for Vector<T, N>
 where
     T: Mul<Output = T> + Add<Output = T>,
