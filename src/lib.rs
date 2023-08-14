@@ -2,37 +2,30 @@ pub mod tuple;
 pub use tuple::point::Point;
 pub use tuple::tuple::Tuple;
 pub use tuple::vector::Vector;
-
 pub mod matrix;
 pub use matrix::Matrix;
-
 pub mod utils;
 pub use utils::ApproximateEq;
 pub use utils::One;
 pub use utils::Zero;
-
 pub mod canvas;
 pub use canvas::Canvas;
-
 pub mod color;
-
 pub mod shapes;
 pub use shapes::Sphere;
 pub use shapes::Shape;
-
 pub mod transformation;
 pub mod ray;
 pub use ray::Ray;
-
 pub mod intersection;
 pub use intersection::Intersection;
 pub use intersection::Intersections;
-
 pub mod object;
 pub use object::Object;
-
 pub mod light;
 pub use light::Light;
-
 pub mod material;
 pub use material::Material;
+pub mod world;
+pub use world::World;
+

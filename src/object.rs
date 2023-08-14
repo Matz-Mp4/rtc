@@ -41,6 +41,14 @@ impl Object {
         self.material.set_color(color);
     }
 
+    pub fn set_difuse(&mut self, diffuse: f64) {
+        self.material.set_diffuse(diffuse);
+    }
+
+    pub fn set_specular(&mut self, specular: f64) {
+        self.material.set_specular(specular);
+    }
+
     pub fn set_transformation(&mut self, transformation: Matrix<f64, 4, 4>) {
         let inverse = transformation.inverse();
         let transpose = inverse.trans();

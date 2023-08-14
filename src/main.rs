@@ -19,7 +19,7 @@ fn main() {
     let mut canvas = Canvas::new(canvas_pixels as usize, canvas_pixels as usize);
 
     let mut object = Object::new_sphere();
-    object.set_color(Color::new(1.0, 0.2, 1.0));
+    object.set_color(Color::new(1.0, 1.0, 1.0));
 
     let light_positon = Point::new_point3D(-10.0, 10.0, -10.0);
     let light_color = Color::white();

@@ -26,7 +26,14 @@ impl Material {
 
     pub fn set_color(&mut self, color: Color) {
         self.color = color;
+    }
 
+    pub fn set_diffuse(&mut self, diffuse: f64) {
+        self.diffuse = diffuse;
+    }
+
+    pub fn set_specular(&mut self, specular: f64) {
+        self.specular = specular;
     }
 
     pub fn lightning(
