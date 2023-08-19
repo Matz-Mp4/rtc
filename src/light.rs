@@ -1,5 +1,7 @@
 use crate::{Point, color::Color};
 
+
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Light {
     pub intensity: Color,
     pub position: Point<f64, 4>

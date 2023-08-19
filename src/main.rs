@@ -4,11 +4,6 @@ use rtc::{
 };
 
 fn main() {
-    /* let screen = Canvas::new(600, 480); */
-    /* screen */
-    /* .convert_to_ppm("/home/matz/Desktop/Code/Rust/rtc/test.ppm") */
-    /* .expect("Error"); */
-
     let ray_origin = Point::new_point3D(0.0, 0.0, -5.0);
     let wall_z = 8.0;
     let wall_size = 10.0;
@@ -19,7 +14,7 @@ fn main() {
     let mut canvas = Canvas::new(canvas_pixels as usize, canvas_pixels as usize);
 
     let mut object = Object::new_sphere();
-    object.set_color(Color::new(1.0, 1.0, 1.0));
+    object.set_color(Color::new(0.8, 0.7, 0.0));
 
     let light_positon = Point::new_point3D(-10.0, 10.0, -10.0);
     let light_color = Color::white();
@@ -54,6 +49,6 @@ fn main() {
     }
 
     canvas
-        .convert_to_ppm("/home/matz/Code/Rust/rtc/test.ppm")
+        .convert_to_ppm("/home/matz/Desktop/Code/Rust/rtc/test.ppm")
         .expect("Error");
 }

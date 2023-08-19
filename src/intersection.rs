@@ -1,42 +1,65 @@
 use std::cmp::Ordering;
 
-use crate::ApproximateEq;
-use crate::{Object, Ray};
+use crate::{Object, Point, Ray, Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Intersection {
+pub struct Intersection<'a> {
     t: f64,
-    object: Object,
+    object: &'a Object,
 }
 
-impl Intersection {
-    pub fn new(t: f64, object: Object) -> Self {
+impl<'a> Intersection<'a> {
+    pub fn new(t: f64, object: &'a Object) -> Self {
         Self { t, object }
     }
 
-    pub fn intersect(ray: &Ray, object: &Object) -> Option<(Intersection, Intersection)> {
+    pub fn intersect(
+        ray: &Ray,
+        object: &'a Object,
+    ) -> Option<(Intersection<'a>, Intersection<'a>)> {
         if let Some((t1, t2)) = object.shape.intersect(ray) {
-            let inter1 = Intersection::new(t1, object.clone());
-            let inter2 = Intersection::new(t2, object.clone());
+            let inter1 = Intersection::new(t1, object);
+            let inter2 = Intersection::new(t2, object);
 
             Some((inter1, inter2))
         } else {
             None
         }
     }
+
+    pub fn prepare_computation(&self, ray: &Ray) -> Computations {
+        let eye_vector = -ray.direction;
+        let point1 = ray.position(self.t);
+        let mut normal1 = self.object.normal_at(&point1);
+        let inside1: bool;
+        if normal1 * eye_vector < 0.0 {
+            inside1 = true;
+            normal1 = -normal1;
+        } else {
+            inside1 = false
+        }
+        Computations {
+            t: self.t,
+            object: self.object,
+            point: point1,
+            eyev: eye_vector,
+            normalv: normal1,
+            inside: inside1,
+        }
+    }
 }
 
-pub struct Intersections {
-    intersections: Vec<Intersection>,
+pub struct Intersections<'a> {
+    intersections: Vec<Intersection<'a>>,
 }
 
-impl Intersections {
+impl<'a> Intersections<'a> {
     pub fn new() -> Self {
         Intersections {
             intersections: Vec::new(),
         }
     }
-    pub fn from_ray(ray: &Ray, object: &Object) -> Self {
+    pub fn from_ray(ray: &Ray, object: &'a Object) -> Self {
         let mut intersections = Vec::new();
 
         if let Some((inter1, inter2)) = Intersection::intersect(ray, object) {
@@ -46,11 +69,11 @@ impl Intersections {
         Self { intersections }
     }
 
-    pub fn from(intersections: Vec<Intersection>) -> Self {
+    pub fn from(intersections: Vec<Intersection<'a>>) -> Self {
         Self { intersections }
     }
 
-    pub fn add(&mut self, inter: Intersection) {
+    pub fn add(&mut self, inter: Intersection<'a>) {
         self.intersections.push(inter);
     }
 
@@ -66,16 +89,20 @@ impl Intersections {
         self.intersections.sort_unstable();
         self.intersections.iter().find(|i| i.t >= 0.0)
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.intersections.is_empty()
+    }
 }
 
-impl PartialOrd for Intersection {
+impl<'a> PartialOrd for Intersection<'a> {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
-impl std::cmp::Eq for Intersection {}
+impl<'a> std::cmp::Eq for Intersection<'a> {}
 
-impl Ord for Intersection {
+impl<'a> Ord for Intersection<'a> {
     fn cmp(&self, other: &Self) -> Ordering {
         if self.t.is_nan() {
             Ordering::Greater
@@ -87,6 +114,36 @@ impl Ord for Intersection {
             Ordering::Less
         } else {
             Ordering::Equal
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Computations<'a> {
+    t: f64,
+    pub object: &'a Object,
+    pub point: Point<f64, 4>,
+    pub eyev: Vector<f64, 4>,
+    pub normalv: Vector<f64, 4>,
+    inside: bool,
+}
+
+impl<'a> Computations<'a> {
+    pub fn new(
+        t: f64,
+        object: &'a Object,
+        point: Point<f64, 4>,
+        eyev: Vector<f64, 4>,
+        normalv: Vector<f64, 4>,
+        inside: bool,
+    ) -> Self {
+        Self {
+            t,
+            object,
+            point,
+            eyev,
+            normalv,
+            inside,
         }
     }
 }
