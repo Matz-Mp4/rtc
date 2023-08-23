@@ -166,4 +166,45 @@ mod basic_test {
 
         assert_eq!(expected, transform * p);
     }
+
+    #[test]
+    fn default_view_transform() {
+        let from = Point::new_point3D(0.0, 0.0, 0.0);
+        let to = Point::new_point3D(0.0, 0.0, -1.0);
+        let up = Vector::new_vec3D(0.0, 1.0, 0.0);
+
+        let t = view_transform(&from, &to, &up);
+
+        assert_eq!(Matrix::iden(), t);
+    }
+
+    #[test]
+    fn view_transformation_matrix_looking_z_direction() {
+        let from = Point::new_point3D(0.0, 0.0, 0.0);
+        let to = Point::new_point3D(0.0, 0.0, 1.0);
+        let up = Vector::new_vec3D(0.0, 1.0, 0.0);
+
+        let t = view_transform(&from, &to, &up);
+        let expected = scaling(-1.0, 1.0, -1.0);
+
+        assert_eq!(expected, t);
+    }
+
+    #[test]
+    fn an_arbitrary_view_transformation() {
+        let from = Point::new_point3D(0.0, 0.0, 0.0);
+        let to = Point::new_point3D(0.0, 0.0, 1.0);
+        let up = Vector::new_vec3D(0.0, 1.0, 0.0);
+
+        let t = view_transform(&from, &to, &up);
+
+        let expected = Matrix::from([
+            [-0.50709, 0.50709, 0.67612, -2.36643],
+            [0.76772, 0.60609, 0.12122, -2.82843],
+            [-0.35857, 0.59761, -0.71714, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]);
+
+        assert_eq!(expected, t);
+    }
 }

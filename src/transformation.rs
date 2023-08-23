@@ -1,4 +1,6 @@
 use super::matrix::Matrix;
+use super::Point;
+use super::Vector;
 
 pub fn translation(x: f64, y: f64, z: f64) -> Matrix<f64, 4, 4> {
     let mut data = [[0.0; 4]; 4];
@@ -73,4 +75,45 @@ pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix<
     data[2][1] = zy;
 
     Matrix::from(data)
+}
+
+pub fn view_transform(
+    from: &Point<f64, 4>,
+    to: &Point<f64, 4>,
+    up: &Vector<f64, 4>,
+) -> Matrix<f64, 4, 4> {
+    let mut data = [[0.0; 4]; 4];
+    let forward = Vector::normalize(*to - *from);
+    let upn = up.normalize();
+    let left = forward | upn;
+    let true_up = left | forward;
+
+    let orientation = Matrix::from([
+        [
+            *left.get(0).unwrap(),
+            *left.get(1).unwrap(),
+            *left.get(2).unwrap(),
+            0.0,
+        ],
+        [
+            *true_up.get(0).unwrap(),
+            *true_up.get(1).unwrap(),
+            *true_up.get(2).unwrap(),
+            0.0,
+        ],
+        [
+            -(*forward.get(0).unwrap()),
+            -(*forward.get(1).unwrap()),
+            -(*forward.get(2).unwrap()),
+            0.0,
+        ],
+        [0.0, 0.0, 0.0, 1.0],
+    ]);
+
+    orientation
+        * translation(
+            -from.get(0).unwrap(),
+            -from.get(1).unwrap(),
+            -(*from.get(2).unwrap()),
+        )
 }

@@ -296,6 +296,25 @@ where
     }
 }
 
+//Cross Product 3D
+impl<T> BitOr for Vector<T, 4>
+where
+    T: Mul<Output = T> + Copy + Sub<Output = T>,
+    T: Sized + Zero + Copy,
+{
+    type Output = Self;
+
+    fn bitor(self, rhs: Self) -> Self::Output {
+        let x = self.data[1] * rhs.data[2] - self.data[2] * rhs.data[1];
+        let y = self.data[2] * rhs.data[0] - self.data[0] * rhs.data[2];
+        let z = self.data[0] * rhs.data[1] - self.data[1] * rhs.data[0];
+
+        Vector {
+            data: [x, y, z, Zero::zero()],
+        }
+    }
+}
+
 impl<T: Copy + Zero + Sized, const N: usize> Deref for Vector<&T, N> {
     type Target = Vector<T, N>;
     fn deref(&self) -> &Self::Target {

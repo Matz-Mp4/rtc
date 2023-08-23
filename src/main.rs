@@ -1,9 +1,13 @@
+use std::f64::consts::PI;
+
 use rtc::{
-    color::Color, transformation::scaling, Canvas, Light, Material, Object, Point, Ray, Shape,
-    Vector,
+    color::Color,
+    transformation::{rotation_y, scaling, translation},
+    Camera, Canvas, Light, Material, Object, Point, Ray, Shape, Vector,
 };
 
 fn main() {
+    /*
     let ray_origin = Point::new_point3D(0.0, 0.0, -5.0);
     let wall_z = 8.0;
     let wall_size = 10.0;
@@ -51,4 +55,15 @@ fn main() {
     canvas
         .convert_to_ppm("/home/matz/Desktop/Code/Rust/rtc/test.ppm")
         .expect("Error");
+    */
+    let mut c = Camera::new(201, 101, PI / 2.0);
+    let transform = rotation_y(PI / 4.0) * translation(0.0, -2.0, 5.0);
+    c.with_transformation(&transform);
+    println!("transform : {:?}", c.transform);
+    println!("inverse : {:?}", c.inverse_transform);
+    let r = c.ray_for_pixel(100.0, 50.0);
+    let expected = Ray::new(
+        Point::new_point3D(0.0, 2.0, -5.0),
+        Vector::new_vec3D(2.0f64.sqrt() / 2.0, 0.0, -2.0f64.sqrt() / 2.0),
+    );
 }

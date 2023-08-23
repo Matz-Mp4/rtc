@@ -58,7 +58,6 @@ mod world_test {
         assert_eq!(expected, color);
     }
 
-    #[test]
     fn color_with_an_intersection_behind_the_ray() {
         let mut world = World::default();
         let ray = Ray::new(

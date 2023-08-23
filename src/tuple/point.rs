@@ -25,6 +25,30 @@ impl<T, const N: usize> Point<T, N> {
 
         Point { data }
     }
+
+    pub fn get<'a>(&'a self, i: usize) -> Option<&'a T>
+    where
+        T: Copy,
+    {
+        if i < self.data.len() {
+            let data = &(self.data[i]);
+            return Some(data);
+        } else {
+            return None;
+        }
+    }
+
+    pub fn get_mut<'a>(&'a mut self, i: usize) -> Option<&'a mut T>
+    where
+        T: Copy,
+    {
+        if i < self.data.len() {
+            let data = &mut (self.data[i]);
+            return Some(data);
+        } else {
+            return None;
+        }
+    }
 }
 
 //---------------------------Tuple---------------------------
@@ -40,24 +64,14 @@ where
     where
         T: Copy,
     {
-        if i < self.data.len() {
-            let data = &(self.data[i]);
-            return Some(data);
-        } else {
-            return None;
-        }
+        self.get(i)
     }
 
     fn get_mut<'a>(&'a mut self, i: usize) -> Option<&'a mut T>
     where
         T: Copy,
     {
-        if i < self.data.len() {
-            let data = &mut (self.data[i]);
-            return Some(data);
-        } else {
-            return None;
-        }
+        self.get_mut(i)
     }
 
     fn from(data: [T; N]) -> Self

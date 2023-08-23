@@ -174,14 +174,7 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
 
 impl<T, const N: usize> Matrix<T, N, N>
 where
-    T: Copy
-        + Sized
-        + Zero
-        + Mul<Output = T>
-        + One
-        + Div<Output = T>
-        + Sub<Output = T>
-        + PartialEq
+    T: Copy + Sized + Zero + Mul<Output = T> + One + Div<Output = T> + Sub<Output = T> + PartialEq,
 {
     pub fn det(&self) -> T {
         let mut det = One::one();
@@ -241,12 +234,10 @@ where
 
     pub fn inverse(&self) -> Matrix<T, N, N>
     where
-        T: PartialOrd + Display,
+        T: PartialOrd,
     {
         let mut output = self.clone();
         let mut iden: Matrix<T, N, N> = Matrix::iden();
-
-        let mut ratio: T;
 
         for i in (1..N).rev() {
             if output.data[i - 1][0] < output.data[i][0] {
@@ -259,7 +250,6 @@ where
                 iden.data[i - 1] = temp_2;
             }
         }
-
 
         for i in 0..N {
             for j in 0..N {
