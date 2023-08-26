@@ -60,7 +60,7 @@ fn main() {
     let transform = rotation_y(PI / 4.0) * translation(0.0, -2.0, 5.0);
     c.with_transformation(&transform);
     println!("transform : {:?}", c.transform);
-    println!("inverse : {:?}", c.inverse_transform);
+    println!("inverse : {:?}", c.transform.inverse());
     let r = c.ray_for_pixel(100.0, 50.0);
     let expected = Ray::new(
         Point::new_point3D(0.0, 2.0, -5.0),
