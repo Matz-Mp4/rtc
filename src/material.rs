@@ -28,6 +28,11 @@ impl Material {
         self.color = color;
     }
 
+
+    pub fn set_ambient(&mut self, ambient: f64) {
+        self.ambient = ambient;
+    }
+
     pub fn set_diffuse(&mut self, diffuse: f64) {
         self.diffuse = diffuse;
     }

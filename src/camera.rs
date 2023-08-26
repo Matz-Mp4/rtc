@@ -1,4 +1,4 @@
-use crate::{Matrix, Point, Ray, Vector};
+use crate::{Canvas, Matrix, Point, Ray, Vector, World};
 
 pub struct Camera {
     pub hsize: usize,
@@ -26,6 +26,20 @@ impl Camera {
         }
     }
 
+    pub fn render(&self, world: &World) -> Canvas {
+        let mut image = Canvas::new(self.hsize, self.vsize);
+
+        for y in 0..self.vsize {
+            for x in 0..self.hsize {
+                let ray = self.ray_for_pixel(x, y);
+                let color = world.color_at(&ray);
+                image[y][x] = color;
+            }
+        }
+
+        image
+    }
+
     fn compute_pixel_size(hsize: usize, vsize: usize, fov: f64) -> (f64, f64, f64) {
         let half_view = f64::tan(fov / 2.0);
         let aspect = hsize as f64 / vsize as f64;
@@ -45,10 +59,10 @@ impl Camera {
         (pixel_size, half_width, half_height)
     }
 
-    pub fn ray_for_pixel(&self, px: f64, py: f64) -> Ray {
+    pub fn ray_for_pixel(&self, px: usize, py: usize) -> Ray {
         // the offset from the edge of the canvas to the pixel's center
-        let xoffset = (px + 0.5) * self.pixel_size;
-        let yoffset = (py + 0.5) * self.pixel_size;
+        let xoffset = (px as f64 + 0.5) * self.pixel_size;
+        let yoffset = (py as f64 + 0.5) * self.pixel_size;
 
         // the untransformed coordinates of the pixel in world space.
         // (remember that the camera looks toward -z, so +x is to the *left*.)

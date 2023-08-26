@@ -109,7 +109,6 @@ impl<T: Sized, const N: usize, const M: usize> Matrix<T, N, M> {
 
         matrix_out
     }
-
     pub fn trans(&self) -> Matrix<T, M, N>
     where
         Mtx<T, M, N>: Zero,
@@ -176,6 +175,93 @@ impl<T, const N: usize> Matrix<T, N, N>
 where
     T: Copy + Sized + Zero + Mul<Output = T> + One + Div<Output = T> + Sub<Output = T> + PartialEq,
 {
+    pub fn inverse(&self) -> Matrix<T, N, N> {
+        let mut aug = Matrix::<T, N, N>::zero_matrix(N, N * 2);
+        let one = One::one();
+        for i in 0..N {
+            for j in 0..N {
+                aug[i][j] = self.data[i][j];
+            }
+            aug[i][i + N] = one;
+        }
+
+        Matrix::<T, N, N>::gauss_jordan_general(&mut aug);
+
+        let mut unaug = Matrix::<T, N, N>::zero_matrix(N, N);
+        for i in 0..N {
+            for j in 0..N {
+                unaug[i][j] = aug[i][j + N];
+            }
+        }
+
+        let mut matrix = Matrix::<T, N, N>::new();
+
+        for i in 0..N {
+            for j in 0..N {
+                matrix.data[i][j] = unaug[i][j];
+            }
+        }
+
+        matrix
+    }
+
+    fn gauss_jordan_general(matrix: &mut Vec<Vec<T>>) {
+        let mut lead = 0;
+        let row_count = matrix.len();
+        let col_count = matrix[0].len();
+
+        for r in 0..row_count {
+            if col_count <= lead {
+                break;
+            }
+            let mut i = r;
+            while matrix[i][lead] == Zero::zero() {
+                i = i + 1;
+                if row_count == i {
+                    i = r;
+                    lead = lead + 1;
+                    if col_count == lead {
+                        break;
+                    }
+                }
+            }
+
+            let temp = matrix[i].to_owned();
+            matrix[i] = matrix[r].to_owned();
+            matrix[r] = temp.to_owned();
+
+            if matrix[r][lead] != Zero::zero() {
+                let div = matrix[r][lead];
+                for j in 0..col_count {
+                    matrix[r][j] = matrix[r][j] / div;
+                }
+            }
+
+            for k in 0..row_count {
+                if k != r {
+                    let mult = matrix[k][lead];
+                    for j in 0..col_count {
+                        matrix[k][j] = matrix[k][j] - matrix[r][j] * mult;
+                    }
+                }
+            }
+            lead = lead + 1;
+        }
+        //matrix.to_owned()
+    }
+
+    fn zero_matrix(rows: usize, cols: usize) -> Vec<Vec<T>> {
+        let mut matrix = Vec::with_capacity(cols);
+        let zero: T = Zero::zero();
+        for _ in 0..rows {
+            let mut col: Vec<T> = Vec::with_capacity(rows);
+            for _ in 0..cols {
+                col.push(zero);
+            }
+            matrix.push(col);
+        }
+        matrix
+    }
     pub fn det(&self) -> T {
         let mut det = One::one();
         let mut temp_matrix = self.clone();
@@ -230,56 +316,6 @@ where
             }
         }
         cofact
-    }
-
-    pub fn inverse(&self) -> Matrix<T, N, N>
-    where
-        T: PartialOrd,
-    {
-        let mut output = self.clone();
-        let mut iden: Matrix<T, N, N> = Matrix::iden();
-
-        for i in (1..N).rev() {
-            if output.data[i - 1][0] < output.data[i][0] {
-                let temp = output.data[i].clone();
-                output.data[i] = output.data[i - 1];
-                output.data[i - 1] = temp;
-
-                let temp_2 = iden.data[i].clone();
-                iden.data[i] = iden.data[i - 1];
-                iden.data[i - 1] = temp_2;
-            }
-        }
-
-        for i in 0..N {
-            for j in 0..N {
-                if j != i {
-                    let temp = output.data[j][i] / output.data[i][i];
-                    for k in 0..(2 * N) {
-                        if k < N {
-                            output.data[j][k] = output.data[i][k] * temp - output.data[j][k];
-                        } else {
-                            let l = k - N;
-                            iden.data[j][l] = iden.data[i][l] * temp - iden.data[j][l];
-                        }
-                    }
-                }
-            }
-        }
-
-        for i in 0..N {
-            let temp = output.data[i][i];
-            for j in 0..(2 * N) {
-                if j < N {
-                    output.data[i][j] = output.data[i][j] / temp;
-                } else {
-                    let l = j - N;
-                    iden.data[i][l] = iden.data[i][l] / temp;
-                }
-            }
-        }
-
-        iden
     }
 }
 

@@ -28,9 +28,9 @@ impl World {
         let light = Light::new(light_color, light_positon);
 
         let mut ob1 = Object::new_sphere();
-        ob1.set_specular(0.2);
-        ob1.set_difuse(0.7);
         ob1.set_color(Color::new(0.8, 1.0, 0.6));
+        ob1.set_difuse(0.7);
+        ob1.set_specular(0.2);
 
         let mut ob2 = Object::new_sphere();
         ob2.set_transformation(scaling(0.5, 0.5, 0.5));
@@ -53,6 +53,7 @@ impl World {
         inters
     }
 
+
     pub fn shade_hit(&self, comps: &Computations) -> Color {
         comps
             .object
@@ -62,10 +63,11 @@ impl World {
 
     pub fn color_at(&self, ray: &Ray) -> Color {
         let mut color = Color::black();
-        let inters = self.intersect_world(ray);
+        let mut inters = self.intersect_world(ray);
 
-        if !inters.is_empty() {
-            let comps = inters.get(0).unwrap().prepare_computation(ray);
+        let empty = inters.is_empty();
+        if let Some(hit) = inters.hit(){
+            let comps = hit.prepare_computation(ray);
             color = self.shade_hit(&comps);
         }
         color

@@ -59,19 +59,13 @@ mod world_test {
     }
 
     fn color_with_an_intersection_behind_the_ray() {
-        let mut world = World::default();
+        let world = World::default();
         let ray = Ray::new(
             Point::new_point3D(0.0, 0.0, 0.75),
             Vector::new_vec3D(0.0, 0.0, -1.0),
         );
-        let mut outer = Object::new_sphere();
-        outer.material.ambient = 1.0;
-        let mut inner = Object::new_sphere();
-        inner.material.ambient = 1.0;
         let color = world.color_at(&ray);
-        world.push_object(outer);
-        world.push_object(inner);
-        let expected = inner.material.color;
+        let expected = world.get_object(1).unwrap().material.color;
         assert_eq!(expected, color);
     }
 }
