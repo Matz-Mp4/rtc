@@ -14,7 +14,7 @@ mod material_test {
 
         let material = Material::default();
 
-        let res = material.lightning(&light, &position, &eyev, &normalv);
+        let res = material.lightning(&light, &position, &eyev, &normalv, false);
         let expected = Color::new(1.9, 1.9, 1.9);
 
         assert_eq!(expected, res);
@@ -33,7 +33,7 @@ mod material_test {
 
         let material = Material::default();
 
-        let res = material.lightning(&light, &position, &eyev, &normalv);
+        let res = material.lightning(&light, &position, &eyev, &normalv,false);
         let expected = Color::new(1.0, 1.0, 1.0);
 
         assert_eq!(expected, res);
@@ -52,7 +52,7 @@ mod material_test {
 
         let material = Material::default();
 
-        let res = material.lightning(&light, &position, &eyev, &normalv);
+        let res = material.lightning(&light, &position, &eyev, &normalv,false);
         let expected = Color::new(0.1, 0.1, 0.1);
 
         assert_eq!(expected, res);

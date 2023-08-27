@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod inter_test {
     use rtc::intersection::Computations;
+    use rtc::transformation::translation;
     use rtc::Intersection;
     use rtc::Intersections;
     use rtc::Object;
@@ -61,25 +62,24 @@ mod inter_test {
 
         assert_eq!(Some(&i4), inters.hit());
     }
-
     #[test]
-    fn intersection_occurs_on_the_inside() {
+    fn the_hit_should_offset_the_point() {
         let ray = Ray::new(
-            Point::new_point3D(0.0, 0.0, 0.0),
+            Point::new_point3D(0.0, 0.0, -5.0),
             Vector::new_vec3D(0.0, 0.0, 1.0),
         );
 
-        let object = Object::new_sphere();
-        let i = Intersection::new(1.0, &object);
-        let res = i.prepare_computation(&ray);
-        let expected = Computations::new(
-            1.0,
-            &object,
-            Point::new_point3D(0.0, 0.0, 1.0),
-            Vector::new_vec3D(0.0, 0.0, -1.0),
-            Vector::new_vec3D(0.0, 0.0, -1.0),
-            true,
-        );
+        let mut object = Object::new_sphere();
+        object.set_transformation(translation(0.0, 0.0, 1.0));
+        let i = Intersection::new(5.0, &object);
+        let comp = i.prepare_computation(&ray);
+        let epsilon = 1.0e-6;
+
+        let expected = true;
+        let over_point_z = *comp.over_point.get(2).unwrap();
+        let point_z = *comp.point.get(2).unwrap();
+
+        let res = over_point_z < -epsilon / 2.0 && point_z > over_point_z;
 
         assert_eq!(expected, res);
     }

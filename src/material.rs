@@ -28,7 +28,6 @@ impl Material {
         self.color = color;
     }
 
-
     pub fn set_ambient(&mut self, ambient: f64) {
         self.ambient = ambient;
     }
@@ -47,6 +46,7 @@ impl Material {
         point: &Point<f64, 4>,
         eyev: &Vector<f64, 4>,
         normalv: &Vector<f64, 4>,
+        shadowed: bool,
     ) -> Color {
         let diffuse: Color;
         let specular: Color;
@@ -54,6 +54,10 @@ impl Material {
         let effective_color = self.color * light.intensity;
         let lightv = Vector::normalize(light.position - *point);
         let ambient = effective_color * self.ambient;
+
+        if shadowed {
+            return ambient;
+        }
 
         //light_dot_normal represents the cosine of the angle between the
         // light vector and the normal vector. A negative number means the

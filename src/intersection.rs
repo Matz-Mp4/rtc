@@ -38,14 +38,27 @@ impl<'a> Intersection<'a> {
         } else {
             inside1 = false
         }
+
+        let epsilon = 1.0e-6;
+
+        let over_point1 = point1 + (normal1 * epsilon);
         Computations {
             t: self.t,
             object: self.object,
             point: point1,
+            over_point: over_point1,
             eyev: eye_vector,
             normalv: normal1,
             inside: inside1,
         }
+    }
+
+    pub fn get_object(&self) -> &Object {
+        self.object
+    }
+
+    pub fn get_t(&self) -> f64 {
+        self.t
     }
 }
 
@@ -120,9 +133,10 @@ impl<'a> Ord for Intersection<'a> {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Computations<'a> {
-    t: f64,
+    pub t: f64,
     pub object: &'a Object,
     pub point: Point<f64, 4>,
+    pub over_point: Point<f64, 4>,
     pub eyev: Vector<f64, 4>,
     pub normalv: Vector<f64, 4>,
     inside: bool,
@@ -133,6 +147,7 @@ impl<'a> Computations<'a> {
         t: f64,
         object: &'a Object,
         point: Point<f64, 4>,
+        over_point: Point<f64, 4>,
         eyev: Vector<f64, 4>,
         normalv: Vector<f64, 4>,
         inside: bool,
@@ -141,6 +156,7 @@ impl<'a> Computations<'a> {
             t,
             object,
             point,
+            over_point,
             eyev,
             normalv,
             inside,

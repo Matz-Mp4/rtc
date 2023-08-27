@@ -1,3 +1,7 @@
+use indicatif::{ProgressBar, ProgressState, ProgressStyle};
+use rayon::prelude::*;
+use std::fmt::Write;
+
 use crate::{Canvas, Matrix, Point, Ray, Vector, World};
 
 pub struct Camera {
@@ -29,11 +33,24 @@ impl Camera {
     pub fn render(&self, world: &World) -> Canvas {
         let mut image = Canvas::new(self.hsize, self.vsize);
 
+        println!("RayTracing...");
+        let total_size = self.vsize * self.hsize;
+        let pb = ProgressBar::new(total_size as u64);
+
+        pb.set_style(ProgressStyle::with_template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pixels}/{total_pixels} ({eta})")
+        .unwrap()
+        .with_key("eta", |state: &ProgressState, w: &mut dyn Write| write!(w, "{:.1}s", state.eta().as_secs_f64()).unwrap())
+        .progress_chars("#>-"));
+
+        let mut current: u64 = 0;
         for y in 0..self.vsize {
             for x in 0..self.hsize {
                 let ray = self.ray_for_pixel(x, y);
                 let color = world.color_at(&ray);
                 image[y][x] = color;
+
+                current += 1;
+                pb.set_position(current as u64);
             }
         }
 

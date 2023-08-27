@@ -58,14 +58,40 @@ mod world_test {
         assert_eq!(expected, color);
     }
 
-    fn color_with_an_intersection_behind_the_ray() {
+    #[test]
+    fn there_is_no_shadow() {
         let world = World::default();
-        let ray = Ray::new(
-            Point::new_point3D(0.0, 0.0, 0.75),
-            Vector::new_vec3D(0.0, 0.0, -1.0),
-        );
-        let color = world.color_at(&ray);
-        let expected = world.get_object(1).unwrap().material.color;
-        assert_eq!(expected, color);
+        let p = Point::new_point3D(0.0, 10.0, 0.0);
+        let expected = false;
+
+        assert_eq!(expected, world.is_shadowed(&p));
+    }
+
+    #[test]
+    fn shadow_when_object_between_point_and_light() {
+        let world = World::default();
+        let p = Point::new_point3D(10.0, -10.0, 10.0);
+        let expected = true;
+
+        assert_eq!(expected, world.is_shadowed(&p));
+    }
+
+    #[test]
+    fn no_shadow_when_object_is_behind_light() {
+        let world = World::default();
+        let p = Point::new_point3D(-20.0, 20.0, -20.0);
+        let expected = false;
+
+        assert_eq!(expected, world.is_shadowed(&p));
+    }
+
+
+    #[test]
+    fn no_shadow_when_object_is_behind_point() {
+        let world = World::default();
+        let p = Point::new_point3D(-2.0, 2.0, -2.0);
+        let expected = false;
+
+        assert_eq!(expected, world.is_shadowed(&p));
     }
 }

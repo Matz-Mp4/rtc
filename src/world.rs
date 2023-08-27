@@ -53,20 +53,38 @@ impl World {
         inters
     }
 
-
     pub fn shade_hit(&self, comps: &Computations) -> Color {
+
+        let shadowed = self.is_shadowed(&comps.over_point);
         comps
             .object
             .material
-            .lightning(&self.light, &comps.point, &comps.eyev, &comps.normalv)
+            .lightning(&self.light, &comps.point, &comps.eyev, &comps.normalv, shadowed)
+    }
+
+    pub fn is_shadowed(&self, point: &Point<f64, 4>) -> bool {
+        let v = self.light.position - *point;
+        let distance = v.magnitude();
+        let direction = v.normalize();
+        let mut shadowed = false;
+
+        let r = Ray::new(*point, direction);
+        let mut inters = self.intersect_world(&r);
+
+        if let Some(hit) = inters.hit() {
+            if hit.get_t() < distance {
+                shadowed = true;
+            }
+        }
+
+        shadowed
     }
 
     pub fn color_at(&self, ray: &Ray) -> Color {
         let mut color = Color::black();
         let mut inters = self.intersect_world(ray);
 
-        let empty = inters.is_empty();
-        if let Some(hit) = inters.hit(){
+        if let Some(hit) = inters.hit() {
             let comps = hit.prepare_computation(ray);
             color = self.shade_hit(&comps);
         }

@@ -1,6 +1,8 @@
 use super::color::Color;
+use indicatif::{ProgressBar, ProgressState, ProgressStyle};
 use std::fs::{self, File};
 use std::ops::{Index, IndexMut};
+use std::{cmp::min, fmt::Write};
 
 pub struct Canvas {
     width: usize,
@@ -17,12 +19,47 @@ impl Canvas {
         }
     }
 
+    pub fn set_pixels(&mut self, pixels: Vec<Color>)  {
+        self.pixels = pixels;
+    }
+
+    pub fn pixels(&mut self) -> &mut Vec<Color> {
+        &mut self.pixels
+    }
     pub fn write_pixel(&mut self, pixel: Color) {
         self.pixels.push(pixel);
     }
 
+    pub fn convert_to_png(&self, file_name: &str) -> image::ImageResult<()> {
+        let mut img = image::ImageBuffer::new(self.width as u32, self.height as u32);
+        let _output = File::create(file_name);
+
+        println!("Writing {}", file_name);
+        let total_size = self.width * self.height;
+        let pb = ProgressBar::new(total_size as u64);
+
+        let mut current: u64 = 0;
+        for (x, y, pixel) in img.enumerate_pixels_mut() {
+            let color = &self[y as usize][x as usize];
+            let r = scale_color(color.red);
+            let g = scale_color(color.green);
+            let b = scale_color(color.blue);
+
+            *pixel = image::Rgb([r, g, b]);
+            current += 1;
+            pb.inc(1);
+            
+        }
+
+        img.save(file_name)
+    }
+
     pub fn convert_to_ppm(&self, file_name: &str) -> Result<File, std::io::Error> {
+        println!("Writing {}", file_name);
         let image = File::create(file_name);
+
+        let total_size = self.width * self.height;
+        let pb = ProgressBar::new(total_size as u64);
         let mut content = String::new();
         //Header
         content.push_str("P3\n");
@@ -40,6 +77,7 @@ impl Canvas {
                     temp.push('\n');
                 }
                 content.push_str(temp.as_str());
+                pb.inc(1);
             }
         }
         fs::write(file_name, content)?;
