@@ -17,7 +17,7 @@ impl<'a> Intersection<'a> {
         ray: &Ray,
         object: &'a Object,
     ) -> Option<(Intersection<'a>, Intersection<'a>)> {
-        if let Some((t1, t2)) = object.shape.intersect(ray) {
+        if let Some((t1, t2)) = object.shape.local_intersect(ray) {
             let inter1 = Intersection::new(t1, object);
             let inter2 = Intersection::new(t2, object);
 

@@ -6,6 +6,8 @@ pub mod matrix;
 pub use matrix::Matrix;
 pub mod utils;
 pub use utils::ApproximateEq;
+pub use utils::BIG_EPSILON;
+pub use utils::EPSILON;
 pub use utils::One;
 pub use utils::Zero;
 pub mod canvas;

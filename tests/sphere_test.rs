@@ -77,7 +77,7 @@ mod sphere_test {
     fn normal_at_a_nonaxial_point() {
         let value = 3.0f64.sqrt() / 3.0;
         let point = Point::new_point3D(value, value, value);
-        let sphere = Shape::Sphere;
+        let sphere = Object::new_sphere();
 
         let n = sphere.normal_at(&point);
 
@@ -90,7 +90,7 @@ mod sphere_test {
     fn normal_is_a_normilized_vector() {
         let value = 3.0f64.sqrt() / 3.0;
         let point = Point::new_point3D(value, value, value);
-        let sphere = Shape::Sphere;
+        let sphere = Object::new_sphere();
 
         let n = sphere.normal_at(&point);
 

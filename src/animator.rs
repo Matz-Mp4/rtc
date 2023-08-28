@@ -1,6 +1,3 @@
-use std::thread;
-use std::time::Duration;
-
 pub struct Animator {
     frame_count: usize,
 }

@@ -82,7 +82,6 @@ pub fn view_transform(
     to: &Point<f64, 4>,
     up: &Vector<f64, 4>,
 ) -> Matrix<f64, 4, 4> {
-    let mut data = [[0.0; 4]; 4];
     let forward = Vector::normalize(*to - *from);
     let upn = up.normalize();
     let left = forward | upn;

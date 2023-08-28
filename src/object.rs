@@ -21,6 +21,16 @@ impl Object {
             inverse_transpose: transpose,
         }
     }
+    pub fn new_plane() -> Self {
+        let iden = Matrix::iden();
+        Self {
+            shape: Shape::Plane,
+            material: Material::default(),
+            transformation: iden,
+            inverse_transformation: iden,
+            inverse_transpose: iden,
+        }
+    }
 
     pub fn new_sphere() -> Self {
         let iden = Matrix::iden();
@@ -58,18 +68,16 @@ impl Object {
     }
 
     pub fn intersects(&self, ray: &Ray) -> Option<(f64, f64)> {
-        let transformed_ray = ray.transform(&self.inverse_transformation);
-        self.shape.intersect(&transformed_ray)
+        let local_ray = ray.transform(&self.inverse_transformation);
+        self.shape.local_intersect(&local_ray)
     }
 
     pub fn normal_at(&self, point: &Point<f64, 4>) -> Vector<f64, 4> {
-        let object_point = self.inverse_transformation * (*point);
-        let object_normal = object_point - Point::new_point3D(0.0, 0.0, 0.0);
-        let mut world_normal = self.inverse_transpose * object_normal;
+        let local_point = self.inverse_transformation * *point;
+        let local_normal = self.shape.local_normal_at(&local_point);
+        let mut world_normal = self.inverse_transpose * local_normal;
         let w = world_normal.get_mut(3).unwrap();
         *w = 0.0;
         world_normal.normalize()
-
-        /* self.shape.normal_at(point) */
     }
 }

@@ -1,5 +1,4 @@
-use super::Shape;
-use crate::{Point, Ray, Vector};
+use crate::{Matrix, Point, Ray, Vector};
 
 // We assume a sphere is always at Position{0, 0 , 0}, thus the absence of coordinates.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -26,7 +25,8 @@ impl Sphere {
         }
     }
 
-    pub fn normal_at(point: &Point<f64, 4>) -> Vector<f64, 4> {
-        *point - Point::new_point3D(0.0, 0.0, 0.0)
+    pub fn normal_at(object_point: &Point<f64, 4>) -> Vector<f64, 4> {
+        let object_normal = *object_point - Point::new_point3D(0.0, 0.0, 0.0);
+        object_normal
     }
 }

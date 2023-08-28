@@ -2,7 +2,6 @@ use super::color::Color;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
 use std::fs::{self, File};
 use std::ops::{Index, IndexMut};
-use std::{cmp::min, fmt::Write};
 
 pub struct Canvas {
     width: usize,

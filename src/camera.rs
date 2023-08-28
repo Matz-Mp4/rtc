@@ -1,5 +1,4 @@
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
-use rayon::prelude::*;
 use std::fmt::Write;
 
 use crate::{Canvas, Matrix, Point, Ray, Vector, World};
