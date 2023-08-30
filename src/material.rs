@@ -1,4 +1,4 @@
-use crate::{color::Color, Light, Point, Vector};
+use crate::{color::Color, Light, Pattern, PatternType, Point, Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Material {
@@ -7,21 +7,37 @@ pub struct Material {
     pub diffuse: f64,
     pub specular: f64,
     pub shininess: f64,
+    pub pattern: Pattern,
 }
 
 impl Material {
-    pub fn new(ambient: f64, color: Color, diffuse: f64, specular: f64, shininess: f64) -> Self {
+    pub fn new(
+        ambient: f64,
+        color: Color,
+        diffuse: f64,
+        specular: f64,
+        shininess: f64,
+        pattern: Pattern,
+    ) -> Self {
         Self {
             ambient,
             color,
             diffuse,
             specular,
             shininess,
+            pattern,
         }
     }
 
     pub fn default() -> Material {
-        Material::new(0.1, Color::white(), 0.9, 0.9, 200.0)
+        Material::new(
+            0.1,
+            Color::white(),
+            0.9,
+            0.9,
+            200.0,
+            Pattern::with_type(PatternType::None),
+        )
     }
 
     pub fn set_color(&mut self, color: Color) {
@@ -40,6 +56,10 @@ impl Material {
         self.specular = specular;
     }
 
+    pub fn set_pattern(&mut self, pattern: Pattern) {
+        self.pattern = pattern;
+    }
+
     pub fn lightning(
         &self,
         light: &Light,
@@ -51,7 +71,15 @@ impl Material {
         let diffuse: Color;
         let specular: Color;
 
-        let effective_color = self.color * light.intensity;
+        let color = {
+            if self.pattern.p_type != PatternType::None {
+                self.pattern.pattern_at(point).unwrap()
+            } else {
+                self.color
+            }
+        };
+
+        let effective_color = color * light.intensity;
         let lightv = Vector::normalize(light.position - *point);
         let ambient = effective_color * self.ambient;
 

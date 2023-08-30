@@ -33,7 +33,7 @@ fn main() {
 
     let mut middle = Object::new_sphere();
     middle.set_transformation(
-        translation(-0.5, 1.0, 0.5) * rotation_z(PI / 2.0) * scaling(1.0, 0.3, 0.4),
+        translation(-0.5, 1.0, 0.5) * rotation_z(PI / 2.0) ,
     );
     middle.material.color = Color::new(0.1, 1.0, 0.5);
     middle.material.diffuse = 0.7;
@@ -63,7 +63,7 @@ fn main() {
     let light = Light::new(Color::white(), Point::new_point3D(-10.0, 10.0, -10.0));
 
     let world = World::new(light, objects);
-    let mut camera = Camera::new(800, 800, PI / 3.0);
+    let mut camera = Camera::new(1920, 1080, PI / 3.0);
     camera.with_transformation(&view_transform(
         &Point::new_point3D(0.0, 1.5, -5.0),
         &Point::new_point3D(0.0, 1.0, 0.0),

@@ -34,3 +34,7 @@ pub mod camera;
 pub use camera::Camera;
 pub mod animator;
 pub use animator::Animator;
+pub mod pattern;
+pub use pattern::Striped;
+pub use pattern::PatternType;
+pub use pattern::Pattern;

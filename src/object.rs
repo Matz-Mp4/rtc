@@ -80,4 +80,11 @@ impl Object {
         *w = 0.0;
         world_normal.normalize()
     }
+
+    pub fn stripe_at_object(&self, world_point: Point<f64, 4>) -> Option<Color> {
+        let object_point = self.inverse_transformation * world_point;
+        let pattern_point = self.material.pattern.inverse * object_point;
+
+        self.material.pattern.pattern_at(&pattern_point)
+    }
 }
