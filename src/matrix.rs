@@ -323,7 +323,7 @@ impl<T: ApproximateEq + PartialEq, const N: usize, const M: usize> PartialEq for
         let mut res = false;
         for i in 0..N {
             for j in 0..M {
-                res = self.data[i][j].approx_eq_low(&other.data[i][j]);
+                res = self.data[i][j].approx_eq(&other.data[i][j]);
                 if !res {
                     break;
                 }

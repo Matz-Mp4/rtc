@@ -36,5 +36,8 @@ pub mod animator;
 pub use animator::Animator;
 pub mod pattern;
 pub use pattern::Striped;
+pub use pattern::Checker;
+pub use pattern::Gradient;
+pub use pattern::Ring;
 pub use pattern::PatternType;
 pub use pattern::Pattern;

@@ -63,6 +63,8 @@ impl Object {
         let inverse = transformation.inverse();
         let transpose = inverse.trans();
         self.transformation = transformation;
+        self.material.pattern.transformation= transformation;
+        self.material.pattern.inverse= inverse;
         self.inverse_transformation = inverse;
         self.inverse_transpose = transpose;
     }
@@ -81,8 +83,8 @@ impl Object {
         world_normal.normalize()
     }
 
-    pub fn stripe_at_object(&self, world_point: Point<f64, 4>) -> Option<Color> {
-        let object_point = self.inverse_transformation * world_point;
+    pub fn pattern_at_object(&self, world_point: &Point<f64, 4>) -> Option<Color> {
+        let object_point = self.inverse_transformation * *world_point;
         let pattern_point = self.material.pattern.inverse * object_point;
 
         self.material.pattern.pattern_at(&pattern_point)

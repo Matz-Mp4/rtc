@@ -59,7 +59,7 @@ impl World {
         comps
             .object
             .material
-            .lightning(&self.light, &comps.point, &comps.eyev, &comps.normalv, shadowed)
+            .lightning(comps.object, &self.light, &comps.point, &comps.eyev, &comps.normalv, shadowed)
     }
 
     pub fn is_shadowed(&self, point: &Point<f64, 4>) -> bool {

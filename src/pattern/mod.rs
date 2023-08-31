@@ -1,5 +1,11 @@
+pub mod checker;
+pub use checker::Checker;
+pub mod ring;
+pub use ring::Ring;
+pub mod gradient;
+pub use gradient::Gradient;
 pub mod striped;
 pub use striped::Striped;
 pub mod pattern;
-pub use pattern::PatternType;
 pub use pattern::Pattern;
+pub use pattern::PatternType;

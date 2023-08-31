@@ -1,5 +1,5 @@
 use super::color::Color;
-use indicatif::{ProgressBar, ProgressState, ProgressStyle};
+use indicatif::{ProgressBar};
 use std::fs::{self, File};
 use std::ops::{Index, IndexMut};
 

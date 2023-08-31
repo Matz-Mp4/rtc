@@ -1,4 +1,4 @@
-use crate::{color::Color, Light, Pattern, PatternType, Point, Vector};
+use crate::{color::Color, Light, Object, Pattern, PatternType, Point, Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Material {
@@ -62,6 +62,7 @@ impl Material {
 
     pub fn lightning(
         &self,
+        object: &Object,
         light: &Light,
         point: &Point<f64, 4>,
         eyev: &Vector<f64, 4>,
@@ -73,7 +74,7 @@ impl Material {
 
         let color = {
             if self.pattern.p_type != PatternType::None {
-                self.pattern.pattern_at(point).unwrap()
+                object.pattern_at_object(point).unwrap()
             } else {
                 self.color
             }

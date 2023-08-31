@@ -1,5 +1,7 @@
 use crate::{color::Color, Matrix, Point, Striped};
 
+use super::{Checker, Gradient, Ring};
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Pattern {
     pub p_type: PatternType,
@@ -41,6 +43,9 @@ impl Pattern {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum PatternType {
     Striped(Striped),
+    Gradient(Gradient),
+    Ring(Ring),
+    Checker(Checker),
     None,
 }
 
@@ -49,9 +54,24 @@ impl PatternType {
         PatternType::Striped(Striped::new(color_a, color_b))
     }
 
+    pub fn checker_pattern(color_a: Color, color_b: Color) -> PatternType {
+        PatternType::Checker(Checker::new(color_a, color_b))
+    }
+
+    pub fn ring_pattern(color_a: Color, color_b: Color) -> PatternType {
+        PatternType::Ring(Ring::new(color_a, color_b))
+    }
+
+    pub fn gradient_pattern(color_a: Color, color_b: Color) -> PatternType {
+        PatternType::Gradient(Gradient::new(color_a, color_b))
+    }
+
     pub fn pattern_at(&self, point: &Point<f64, 4>) -> Option<Color> {
         match self {
             PatternType::Striped(p) => Some(p.stripe_at(point)),
+            PatternType::Gradient(p) => Some(p.gradient_at(point)),
+            PatternType::Checker(p) => Some(p.checker_at(point)),
+            PatternType::Ring(p) => Some(p.ring_at(point)),
             PatternType::None => None,
         }
     }
