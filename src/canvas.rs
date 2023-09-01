@@ -1,5 +1,5 @@
 use super::color::Color;
-use indicatif::{ProgressBar};
+use colored::Colorize;
 use std::fs::{self, File};
 use std::ops::{Index, IndexMut};
 
@@ -33,11 +33,8 @@ impl Canvas {
         let mut img = image::ImageBuffer::new(self.width as u32, self.height as u32);
         let _output = File::create(file_name);
 
-        println!("Writing {}", file_name);
-        let total_size = self.width * self.height;
-        let pb = ProgressBar::new(total_size as u64);
+        println!("{}{}" ,"Writing ".green().bold() , file_name);
 
-        let mut current: u64 = 0;
         for (x, y, pixel) in img.enumerate_pixels_mut() {
             let color = &self[y as usize][x as usize];
             let r = scale_color(color.red);
@@ -45,8 +42,6 @@ impl Canvas {
             let b = scale_color(color.blue);
 
             *pixel = image::Rgb([r, g, b]);
-            current += 1;
-            pb.inc(1);
             
         }
 
@@ -58,7 +53,6 @@ impl Canvas {
         let image = File::create(file_name);
 
         let total_size = self.width * self.height;
-        let pb = ProgressBar::new(total_size as u64);
         let mut content = String::new();
         //Header
         content.push_str("P3\n");
@@ -76,7 +70,6 @@ impl Canvas {
                     temp.push('\n');
                 }
                 content.push_str(temp.as_str());
-                pb.inc(1);
             }
         }
         fs::write(file_name, content)?;

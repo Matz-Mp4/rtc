@@ -7,8 +7,6 @@ mod inter_test {
     use rtc::Object;
     use rtc::Point;
     use rtc::Ray;
-    use rtc::Shape;
-    use rtc::Sphere;
     use rtc::Vector;
 
     #[test]
@@ -82,5 +80,22 @@ mod inter_test {
         let res = over_point_z < -epsilon / 2.0 && point_z > over_point_z;
 
         assert_eq!(expected, res);
+    }
+
+    #[test]
+    fn precomputing_reflection_vector() {
+        let sqrt2 = f64::sqrt(2.0);
+        let half_sqrt2 = sqrt2 / 2.0;
+        let ray = Ray::new(
+            Point::new_point3D(0.0, 1.0, -1.0),
+            Vector::new_vec3D(0.0, -half_sqrt2, half_sqrt2),
+        );
+
+        let object = Object::new_plane();
+        let i = Intersection::new(sqrt2, &object);
+        let comp = i.prepare_computation(&ray);
+
+        let expected = Vector::new_vec3D(0.0, half_sqrt2, half_sqrt2);
+        assert_eq!(expected, comp.reflectv);
     }
 }

@@ -79,7 +79,7 @@ impl<T: Sqrt<Output = T>, const N: usize> Vector<T, N> {
 
 impl<const N: usize> Vector<f64, N> {
     pub fn reflect(&self, normal: &Vector<f64, N>) -> Vector<f64, N> {
-        *self - *normal * 2.0 * ((*self) * (*normal))
+        *self - (*normal * 2.0) * ((*self) * (*normal))
     }
 }
 

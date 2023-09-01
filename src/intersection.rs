@@ -34,14 +34,15 @@ impl<'a> Intersection<'a> {
         let inside1: bool;
         if normal1 * eye_vector < 0.0 {
             inside1 = true;
+
             normal1 = -normal1;
         } else {
             inside1 = false
         }
-
+        let reflectv1 = ray.direction.reflect(&normal1);
         let epsilon = 1.0e-6;
-
         let over_point1 = point1 + (normal1 * epsilon);
+
         Computations {
             t: self.t,
             object: self.object,
@@ -49,6 +50,7 @@ impl<'a> Intersection<'a> {
             over_point: over_point1,
             eyev: eye_vector,
             normalv: normal1,
+            reflectv: reflectv1,
             inside: inside1,
         }
     }
@@ -139,6 +141,7 @@ pub struct Computations<'a> {
     pub over_point: Point<f64, 4>,
     pub eyev: Vector<f64, 4>,
     pub normalv: Vector<f64, 4>,
+    pub reflectv: Vector<f64, 4>,
     inside: bool,
 }
 
@@ -150,6 +153,7 @@ impl<'a> Computations<'a> {
         over_point: Point<f64, 4>,
         eyev: Vector<f64, 4>,
         normalv: Vector<f64, 4>,
+        reflectv: Vector<f64, 4>,
         inside: bool,
     ) -> Self {
         Self {
@@ -159,6 +163,7 @@ impl<'a> Computations<'a> {
             over_point,
             eyev,
             normalv,
+            reflectv,
             inside,
         }
     }

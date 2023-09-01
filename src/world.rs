@@ -1,5 +1,6 @@
 use crate::intersection::Computations;
 use crate::transformation::scaling;
+use crate::ApproximateEq;
 use crate::{color::Color, Light, Point};
 use crate::{Intersection, Intersections, Object, Ray};
 
@@ -7,11 +8,16 @@ use crate::{Intersection, Intersections, Object, Ray};
 pub struct World {
     pub light: Light,
     pub objects: Vec<Object>,
+    pub recursion_limit: u8,
 }
 
 impl World {
-    pub fn new(light: Light, objects: Vec<Object>) -> Self {
-        Self { light, objects }
+    pub fn new(light: Light, objects: Vec<Object>, recursion_limit: u8) -> Self {
+        Self {
+            light,
+            objects,
+            recursion_limit,
+        }
     }
 
     pub fn push_object(&mut self, object: Object) {
@@ -36,7 +42,11 @@ impl World {
         ob2.set_transformation(scaling(0.5, 0.5, 0.5));
         let objects = Vec::from([ob1, ob2]);
 
-        World { light, objects }
+        World {
+            light,
+            objects,
+            recursion_limit: 1,
+        }
     }
 
     pub fn intersect_world(&self, ray: &Ray) -> Intersections {
@@ -53,13 +63,19 @@ impl World {
         inters
     }
 
-    pub fn shade_hit(&self, comps: &Computations) -> Color {
-
+    pub fn shade_hit(&self, comps: &Computations, remaing: u8) -> Color {
         let shadowed = self.is_shadowed(&comps.over_point);
-        comps
-            .object
-            .material
-            .lightning(comps.object, &self.light, &comps.point, &comps.eyev, &comps.normalv, shadowed)
+        let surface = comps.object.material.lightning(
+            comps.object,
+            &self.light,
+            &comps.point,
+            &comps.eyev,
+            &comps.normalv,
+            shadowed,
+        );
+        let reflected = self.reflected_color(&comps, remaing);
+
+        surface + reflected
     }
 
     pub fn is_shadowed(&self, point: &Point<f64, 4>) -> bool {
@@ -80,13 +96,24 @@ impl World {
         shadowed
     }
 
-    pub fn color_at(&self, ray: &Ray) -> Color {
+    pub fn reflected_color(&self, comps: &Computations, remaing: u8) -> Color {
+        if comps.object.material.reflective.approx_eq_low(&0.0) || remaing == 0 {
+            Color::black()
+        } else {
+            let relfect_ray = Ray::new(comps.over_point.clone(), comps.reflectv.clone());
+            let color = self.color_at(&relfect_ray, remaing);
+
+            color * comps.object.material.reflective
+        }
+    }
+
+    pub fn color_at(&self, ray: &Ray, remaing: u8) -> Color {
         let mut color = Color::black();
         let mut inters = self.intersect_world(ray);
 
         if let Some(hit) = inters.hit() {
             let comps = hit.prepare_computation(ray);
-            color = self.shade_hit(&comps);
+            color = self.shade_hit(&comps, remaing - 1);
         }
         color
     }

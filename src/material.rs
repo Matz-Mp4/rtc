@@ -7,6 +7,7 @@ pub struct Material {
     pub diffuse: f64,
     pub specular: f64,
     pub shininess: f64,
+    pub reflective: f64,
     pub pattern: Pattern,
 }
 
@@ -17,6 +18,8 @@ impl Material {
         diffuse: f64,
         specular: f64,
         shininess: f64,
+
+        reflective: f64,
         pattern: Pattern,
     ) -> Self {
         Self {
@@ -25,6 +28,7 @@ impl Material {
             diffuse,
             specular,
             shininess,
+            reflective,
             pattern,
         }
     }
@@ -36,6 +40,7 @@ impl Material {
             0.9,
             0.9,
             200.0,
+            0.0,
             Pattern::with_type(PatternType::None),
         )
     }
