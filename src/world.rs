@@ -8,15 +8,15 @@ use crate::{Intersection, Intersections, Object, Ray};
 pub struct World {
     pub light: Light,
     pub objects: Vec<Object>,
-    pub recursion_limit: u8,
+    pub reflection_limit: u8,
 }
 
 impl World {
-    pub fn new(light: Light, objects: Vec<Object>, recursion_limit: u8) -> Self {
+    pub fn new(light: Light, objects: Vec<Object>, reflection_limit: u8) -> Self {
         Self {
             light,
             objects,
-            recursion_limit,
+            reflection_limit,
         }
     }
 
@@ -45,7 +45,7 @@ impl World {
         World {
             light,
             objects,
-            recursion_limit: 1,
+            reflection_limit: 4,
         }
     }
 
@@ -53,9 +53,10 @@ impl World {
         let mut inters = Intersections::new();
 
         for object in &self.objects {
-            if let Some((t1, t2)) = object.intersects(ray) {
-                inters.add(Intersection::new(t1, &object));
-                inters.add(Intersection::new(t2, &object));
+            if let Some(result) = object.intersects(ray) {
+                for t in result {
+                    inters.add(Intersection::new(t, &object));
+                }
             }
         }
         inters.sort();
@@ -63,7 +64,7 @@ impl World {
         inters
     }
 
-    pub fn shade_hit(&self, comps: &Computations, remaing: u8) -> Color {
+    pub fn shade_hit(&self, comps: &Computations) -> Color {
         let shadowed = self.is_shadowed(&comps.over_point);
         let surface = comps.object.material.lightning(
             comps.object,
@@ -73,7 +74,7 @@ impl World {
             &comps.normalv,
             shadowed,
         );
-        let reflected = self.reflected_color(&comps, remaing);
+        let reflected = self.reflected_color(&comps);
 
         surface + reflected
     }
@@ -96,24 +97,24 @@ impl World {
         shadowed
     }
 
-    pub fn reflected_color(&self, comps: &Computations, remaing: u8) -> Color {
-        if comps.object.material.reflective.approx_eq_low(&0.0) || remaing == 0 {
+    pub fn reflected_color(&self, comps: &Computations) -> Color {
+        if comps.object.material.reflective.approx_eq_low(&0.0) || self.reflection_limit == 0 {
             Color::black()
         } else {
             let relfect_ray = Ray::new(comps.over_point.clone(), comps.reflectv.clone());
-            let color = self.color_at(&relfect_ray, remaing);
+            let color = self.color_at(&relfect_ray);
 
             color * comps.object.material.reflective
         }
     }
 
-    pub fn color_at(&self, ray: &Ray, remaing: u8) -> Color {
+    pub fn color_at(&self, ray: &Ray) -> Color {
         let mut color = Color::black();
         let mut inters = self.intersect_world(ray);
 
         if let Some(hit) = inters.hit() {
-            let comps = hit.prepare_computation(ray);
-            color = self.shade_hit(&comps, remaing - 1);
+            let comps = hit.prepare_computation(&Intersections::new(), 0, ray);
+            color = self.shade_hit(&comps);
         }
         color
     }

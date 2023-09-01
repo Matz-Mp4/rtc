@@ -32,6 +32,20 @@ impl Object {
         }
     }
 
+    pub fn new_glass_sphere() -> Self {
+        let iden = Matrix::iden();
+        let mut material = Material::default();
+        material.transparency = 1.0;
+        material.refractive_index = 1.5;
+        Self {
+            shape: Shape::Sphere,
+            material,
+            transformation: iden,
+            inverse_transformation: iden,
+            inverse_transpose: iden,
+        }
+    }
+
     pub fn new_sphere() -> Self {
         let iden = Matrix::iden();
         Self {
@@ -63,13 +77,13 @@ impl Object {
         let inverse = transformation.inverse();
         let transpose = inverse.trans();
         self.transformation = transformation;
-        self.material.pattern.transformation= transformation;
-        self.material.pattern.inverse= inverse;
+        /* self.material.pattern.transformation= transformation; */
+        /* self.material.pattern.inverse= inverse; */
         self.inverse_transformation = inverse;
         self.inverse_transpose = transpose;
     }
 
-    pub fn intersects(&self, ray: &Ray) -> Option<(f64, f64)> {
+    pub fn intersects(&self, ray: &Ray) -> Option<Vec<f64>> {
         let local_ray = ray.transform(&self.inverse_transformation);
         self.shape.local_intersect(&local_ray)
     }

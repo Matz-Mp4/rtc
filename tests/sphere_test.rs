@@ -17,9 +17,9 @@ mod sphere_test {
 
         let ray = Ray::new(point, vector);
 
-        if let Some((t1, t2)) = Sphere::intersect(&ray) {
-            assert_eq!(4.0, t1);
-            assert_eq!(6.0, t2);
+        if let Some(result) = Sphere::intersect(&ray) {
+            assert_eq!(4.0, result[0]);
+            assert_eq!(6.0, result[1]);
         }
     }
 
@@ -30,9 +30,9 @@ mod sphere_test {
 
         let ray = Ray::new(point, vector);
 
-        if let Some((t1, t2)) = Sphere::intersect(&ray) {
-            assert_eq!(5.0, t1);
-            assert_eq!(5.0, t2);
+        if let Some(result) = Sphere::intersect(&ray) {
+            assert_eq!(5.0, result[0]);
+            assert_eq!(5.0, result[1]);
         }
     }
 
@@ -54,9 +54,9 @@ mod sphere_test {
 
         let ray = Ray::new(point, vector);
 
-        if let Some((t1, t2)) = Sphere::intersect(&ray) {
-            assert_eq!(-1.0, t1);
-            assert_eq!(1.0, t2);
+        if let Some(result) = Sphere::intersect(&ray) {
+            assert_eq!(-1.0, result[0]);
+            assert_eq!(1.0, result[1]);
         }
     }
 
@@ -67,9 +67,9 @@ mod sphere_test {
 
         let ray = Ray::new(point, vector);
 
-        if let Some((t1, t2)) = Sphere::intersect(&ray) {
-            assert_eq!(-6.0, t1);
-            assert_eq!(-4.0, t2);
+        if let Some(result) = Sphere::intersect(&ray) {
+            assert_eq!(-6.0, result[0]);
+            assert_eq!(-4.0, result[1]);
         }
     }
 

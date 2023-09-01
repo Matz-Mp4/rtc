@@ -13,21 +13,61 @@ impl<'a> Intersection<'a> {
         Self { t, object }
     }
 
-    pub fn intersect(
-        ray: &Ray,
-        object: &'a Object,
-    ) -> Option<(Intersection<'a>, Intersection<'a>)> {
-        if let Some((t1, t2)) = object.shape.local_intersect(ray) {
-            let inter1 = Intersection::new(t1, object);
-            let inter2 = Intersection::new(t2, object);
+    pub fn intersect(ray: &Ray, object: &'a Object) -> Option<Intersections<'a>> {
+        if let Some(inters) = object.shape.local_intersect(ray) {
+            let mut output = Intersections::new();
 
-            Some((inter1, inter2))
+            for t in inters {
+                output.add(Intersection::new(t, object));
+            }
+
+            Some(output)
         } else {
             None
         }
     }
 
-    pub fn prepare_computation(&self, ray: &Ray) -> Computations {
+    pub fn prepare_computation(
+        &self,
+        intersections: &Intersections<'a>,
+        intersection_index: usize,
+        ray: &Ray,
+    ) -> Computations {
+        let mut containers: Vec<&Object> = Vec::new();
+        let mut n1 = 0.0;
+        let mut n2 = 0.0;
+
+        for inter in intersections.into_iter() {
+            if let Some(k) = intersections.hit() {
+                if inter == *k {
+                    if containers.is_empty() {
+                        n1 = 1.0;
+                    } else {
+                        let last = containers.last().unwrap();
+                        n1 = last.material.refractive_index;
+                    }
+                }
+            }
+
+            match containers
+                .iter()
+                .position(|&object| std::ptr::eq(object, inter.object))
+            {
+                Some(pos) => {
+                    let _ = containers.remove(pos);
+                }
+                None => containers.push(inter.object),
+            }
+
+            if let Some(k) = intersections.hit() {
+                if containers.is_empty() {
+                    n2 = 1.0;
+                } else {
+                    let last = containers.last().unwrap();
+                    n2 = last.material.refractive_index;
+                }
+            }
+        }
         let eye_vector = -ray.direction;
         let point1 = ray.position(self.t);
         let mut normal1 = self.object.normal_at(&point1);
@@ -45,6 +85,8 @@ impl<'a> Intersection<'a> {
 
         Computations {
             t: self.t,
+            n1,
+            n2,
             object: self.object,
             point: point1,
             over_point: over_point1,
@@ -74,6 +116,7 @@ impl<'a> Intersections<'a> {
             intersections: Vec::new(),
         }
     }
+    /*
     pub fn from_ray(ray: &Ray, object: &'a Object) -> Self {
         let mut intersections = Vec::new();
 
@@ -82,7 +125,7 @@ impl<'a> Intersections<'a> {
             intersections.push(inter2);
         }
         Self { intersections }
-    }
+    }*/
 
     pub fn from(intersections: Vec<Intersection<'a>>) -> Self {
         Self { intersections }
@@ -107,6 +150,10 @@ impl<'a> Intersections<'a> {
 
     pub fn is_empty(&self) -> bool {
         self.intersections.is_empty()
+    }
+
+    pub fn into_iter(&self) -> std::vec::IntoIter<Intersection> {
+        self.intersections.clone().into_iter()
     }
 }
 
@@ -136,6 +183,8 @@ impl<'a> Ord for Intersection<'a> {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Computations<'a> {
     pub t: f64,
+    pub n1: f64,
+    pub n2: f64,
     pub object: &'a Object,
     pub point: Point<f64, 4>,
     pub over_point: Point<f64, 4>,
@@ -148,6 +197,8 @@ pub struct Computations<'a> {
 impl<'a> Computations<'a> {
     pub fn new(
         t: f64,
+        n1: f64,
+        n2: f64,
         object: &'a Object,
         point: Point<f64, 4>,
         over_point: Point<f64, 4>,
@@ -158,6 +209,8 @@ impl<'a> Computations<'a> {
     ) -> Self {
         Self {
             t,
+            n1,
+            n2,
             object,
             point,
             over_point,

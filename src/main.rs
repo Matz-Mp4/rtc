@@ -8,14 +8,21 @@ use rtc::{
 };
 
 fn main() {
+    let mut wall = Object::new_plane();
+    wall.material.color = Color::new(0.9, 0.9, 0.9);
+    wall.material.specular = 0.0;
+    wall.material.reflective = 1.0;
+    wall.set_transformation(translation(-1.0, 1.0, 1.0) * rotation_x(PI / 2.0));
+
     let mut floor = Object::new_plane();
-    floor.material.color = Color::new(0.3, 0.9, 0.9);
+    floor.material.color = Color::white();
     floor.material.specular = 0.0;
+    floor.material.reflective = 1.0;
     floor
         .material
-        .set_pattern(Pattern::with_type(PatternType::ring_pattern(
-            Color::white(),
+        .set_pattern(Pattern::with_type(PatternType::striped_pattern(
             Color::black(),
+            Color::white(),
         )));
 
     let mut middle = Object::new_sphere();
@@ -32,9 +39,10 @@ fn main() {
 
     let mut right = Object::new_sphere();
     right.set_transformation(translation(0.2, 0.5, 0.5) * scaling(0.5, 0.5, 0.5));
-    right.material.color = Color::new(0.5, 1.0, 0.1);
+    right.material.color = Color::white();
     right.material.diffuse = 0.7;
     right.material.specular = 0.3;
+    right.material.reflective = 1.0;
 
     let mut left = Object::new_sphere();
     left.set_transformation(translation(-1.2, 0.5, 0.5) * scaling(0.5, 0.5, 0.5));
@@ -51,8 +59,8 @@ fn main() {
 
     let light = Light::new(Color::white(), Point::new_point3D(-10.0, 10.0, -10.0));
 
-    let world = World::new(light, objects);
-    let mut camera = Camera::new(1680, 900, PI / 3.0);
+    let world = World::new(light, objects, 5);
+    let mut camera = Camera::new(1000, 1000, PI / 3.0);
     camera.with_transformation(&view_transform(
         &Point::new_point3D(0.0, 1.5, -5.0),
         &Point::new_point3D(0.0, 1.0, 0.0),
@@ -61,7 +69,7 @@ fn main() {
 
     let canvas = camera.render(&world);
     canvas
-        /* .convert_to_ppm("./home/matz/Code/Rust/rtc/output.ppm") */
-        .convert_to_png("/home/matz/Code/Rust/rtc/output.png")
+        .convert_to_ppm("/home/matz/Desktop/Code/Rust/rtc/output.ppm")
+        /* .convert_to_png("/home/matz/Desktop/Code/Rust/rtc/output.png") */
         .expect("Error");
 }

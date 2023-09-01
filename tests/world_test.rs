@@ -122,4 +122,29 @@ mod world_test {
         assert_eq!(expected, result);
     }
 
+    #[test]
+    fn reflected_color_maximum_recursive_depth() {
+        let mut world = World::default();
+        world.reflection_limit = 0;
+
+        let mut object = Object::new_plane();
+        object.material.reflective = 0.5;
+        object.set_transformation(translation(0.0, -1.0, 0.0));
+
+        let sqrt2 = f64::sqrt(2.0);
+        let half_sqrt2 = sqrt2 / 2.0;
+        let ray = Ray::new(
+            Point::new_point3D(0.0, 0.0, -3.0),
+            Vector::new_vec3D(0.0, -half_sqrt2, half_sqrt2),
+        );
+
+        let i = Intersection::new(sqrt2, &object);
+        world.push_object(object);
+        let comps = i.prepare_computation(&ray);
+        let result = world.reflected_color(&comps);
+
+        let expected = Color::black();
+
+        assert_eq!(expected, result);
+    }
 }

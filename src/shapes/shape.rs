@@ -9,7 +9,7 @@ pub enum Shape {
 }
 
 impl Shape {
-    pub fn local_intersect(&self, ray: &Ray) -> Option<(f64, f64)> {
+    pub fn local_intersect(&self, ray: &Ray) -> Option<Vec<f64>> {
         match *self {
             Self::Sphere => Sphere::intersect(ray),
             Self::Plane => Plane::intersect(ray),

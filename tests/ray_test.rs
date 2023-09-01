@@ -59,10 +59,10 @@ mod ray_test {
         let mut object = Object::new_sphere();
         object.set_transformation(scaling(2.0, 2.0, 2.0));
 
-        if let Some((t1, t2)) = object.intersects(&ray) {
-            assert_eq!(3.0, t1);
-            assert_eq!(7.0, t2);
-        } 
+        if let Some(result) = object.intersects(&ray) {
+            assert_eq!(3.0, result[0]);
+            assert_eq!(7.0, result[1]);
+        }
     }
 
     #[test]
@@ -75,6 +75,5 @@ mod ray_test {
 
         let result = object.intersects(&ray);
         assert_eq!(None, result);
-         
     }
 }
