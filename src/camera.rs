@@ -1,4 +1,3 @@
-
 use crate::{Canvas, Matrix, Point, Ray, Vector, World};
 use colored::{self, Colorize};
 
@@ -35,7 +34,7 @@ impl Camera {
         for y in 0..self.vsize {
             for x in 0..self.hsize {
                 let ray = self.ray_for_pixel(x, y);
-                let color = world.color_at(&ray);
+                let color = world.color_at(&ray, world.reflection_limit);
                 image[y][x] = color;
             }
         }

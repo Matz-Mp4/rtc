@@ -14,7 +14,7 @@ impl Plane {
 
     pub fn intersect(ray: &Ray) -> Option<Vec<f64>> {
         let direction_y = ray.direction.get(1).unwrap();
-        if direction_y.abs() < EPSILON || direction_y.approx_eq_low(&EPSILON) {
+        if direction_y.abs() < EPSILON  {
             None
         } else {
             let origin_y = ray.origin.get(1).unwrap();

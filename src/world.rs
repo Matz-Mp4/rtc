@@ -28,6 +28,10 @@ impl World {
         self.objects.get(i)
     }
 
+    pub fn get_mut_object(&mut self, i: usize) -> Option<&mut Object> {
+        self.objects.get_mut(i)
+    }
+
     pub fn default() -> World {
         let light_positon = Point::new_point3D(-10.0, 10.0, -10.0);
         let light_color = Color::white();
@@ -64,19 +68,25 @@ impl World {
         inters
     }
 
-    pub fn shade_hit(&self, comps: &Computations) -> Color {
+    pub fn shade_hit(&self, comps: &Computations, remaing: u8) -> Color {
         let shadowed = self.is_shadowed(&comps.over_point);
         let surface = comps.object.material.lightning(
             comps.object,
             &self.light,
-            &comps.point,
+            &comps.over_point,
             &comps.eyev,
             &comps.normalv,
             shadowed,
         );
-        let reflected = self.reflected_color(&comps);
+        let reflected = self.reflected_color(&comps, remaing);
+        let refracted = self.refracted_color(&comps, remaing);
 
-        surface + reflected
+        if comps.object.material.reflective > 0.0 && comps.object.material.transparency > 0.0 {
+            let reflectance = comps.schlick();
+            return surface + reflected * reflectance + refracted * (1.0 - reflectance);
+        } else {
+            return surface + reflected + refracted;
+        }
     }
 
     pub fn is_shadowed(&self, point: &Point<f64, 4>) -> bool {
@@ -97,24 +107,52 @@ impl World {
         shadowed
     }
 
-    pub fn reflected_color(&self, comps: &Computations) -> Color {
-        if comps.object.material.reflective.approx_eq_low(&0.0) || self.reflection_limit == 0 {
+    pub fn reflected_color(&self, comps: &Computations, remaing: u8) -> Color {
+        if comps.object.material.reflective.approx_eq_low(&0.0) || remaing == 0 {
             Color::black()
         } else {
             let relfect_ray = Ray::new(comps.over_point.clone(), comps.reflectv.clone());
-            let color = self.color_at(&relfect_ray);
+            let color = self.color_at(&relfect_ray, remaing - 1);
 
             color * comps.object.material.reflective
         }
     }
 
-    pub fn color_at(&self, ray: &Ray) -> Color {
-        let mut color = Color::black();
-        let mut inters = self.intersect_world(ray);
+    pub fn refracted_color(&self, comps: &Computations, remaing: u8) -> Color {
+        if comps.object.material.transparency.approx_eq(&0.0) || remaing == 0 {
+            Color::black()
+        } else {
+            //this is inverted from the definition of Snell's Law.
+            let n_ratio = comps.n1 / comps.n2;
+            // cos(theta_i) is the same as the dot product of the two vectors
+            let cos_i = comps.eyev * comps.normalv;
+            // sin(theta_t)^2 via trigonometric identity
+            let sin2_t = n_ratio * n_ratio * (1.0 - cos_i * cos_i);
 
-        if let Some(hit) = inters.hit() {
-            let comps = hit.prepare_computation(&Intersections::new(), 0, ray);
-            color = self.shade_hit(&comps);
+            if sin2_t > 1.0 {
+                return Color::black();
+            }
+            //cos(theta_t) via trigonometric identity
+            let cos_t = f64::sqrt(1.0 - sin2_t);
+            //Compute the direction of the refracted ray
+            let direction = comps.normalv * (n_ratio * cos_i - cos_t) - comps.eyev * n_ratio;
+            //Create the refracted ray
+            let refract_ray = Ray::new(comps.under_point, direction);
+
+            let color =
+                self.color_at(&refract_ray, remaing - 1) * comps.object.material.transparency;
+
+            color
+        }
+    }
+
+    pub fn color_at(&self, ray: &Ray, remaing: u8) -> Color {
+        let mut color = Color::black();
+        let inters = self.intersect_world(ray);
+
+        if let Some(hit) = inters.hit_index() {
+            let comps = Computations::prepare_computation(&inters, hit, ray);
+            color = self.shade_hit(&comps, remaing);
         }
         color
     }

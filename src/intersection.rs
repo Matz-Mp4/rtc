@@ -27,47 +27,7 @@ impl<'a> Intersection<'a> {
         }
     }
 
-    pub fn prepare_computation(
-        &self,
-        intersections: &Intersections<'a>,
-        intersection_index: usize,
-        ray: &Ray,
-    ) -> Computations {
-        let mut containers: Vec<&Object> = Vec::new();
-        let mut n1 = 0.0;
-        let mut n2 = 0.0;
-
-        for inter in intersections.into_iter() {
-            if let Some(k) = intersections.hit() {
-                if inter == *k {
-                    if containers.is_empty() {
-                        n1 = 1.0;
-                    } else {
-                        let last = containers.last().unwrap();
-                        n1 = last.material.refractive_index;
-                    }
-                }
-            }
-
-            match containers
-                .iter()
-                .position(|&object| std::ptr::eq(object, inter.object))
-            {
-                Some(pos) => {
-                    let _ = containers.remove(pos);
-                }
-                None => containers.push(inter.object),
-            }
-
-            if let Some(k) = intersections.hit() {
-                if containers.is_empty() {
-                    n2 = 1.0;
-                } else {
-                    let last = containers.last().unwrap();
-                    n2 = last.material.refractive_index;
-                }
-            }
-        }
+    pub fn prepare_computation(&self, ray: &Ray) -> Computations {
         let eye_vector = -ray.direction;
         let point1 = ray.position(self.t);
         let mut normal1 = self.object.normal_at(&point1);
@@ -82,14 +42,16 @@ impl<'a> Intersection<'a> {
         let reflectv1 = ray.direction.reflect(&normal1);
         let epsilon = 1.0e-6;
         let over_point1 = point1 + (normal1 * epsilon);
+        let under_point1 = point1 - (normal1 * epsilon);
 
         Computations {
             t: self.t,
-            n1,
-            n2,
+            n1: 0.0,
+            n2: 0.0,
             object: self.object,
             point: point1,
             over_point: over_point1,
+            under_point: under_point1,
             eyev: eye_vector,
             normalv: normal1,
             reflectv: reflectv1,
@@ -148,6 +110,10 @@ impl<'a> Intersections<'a> {
         self.intersections.iter().find(|i| i.t >= 0.0)
     }
 
+    pub fn hit_index(&self) -> Option<usize> {
+        self.intersections.iter().position(|i| i.t >= 0.0)
+    }
+
     pub fn is_empty(&self) -> bool {
         self.intersections.is_empty()
     }
@@ -188,6 +154,7 @@ pub struct Computations<'a> {
     pub object: &'a Object,
     pub point: Point<f64, 4>,
     pub over_point: Point<f64, 4>,
+    pub under_point: Point<f64, 4>,
     pub eyev: Vector<f64, 4>,
     pub normalv: Vector<f64, 4>,
     pub reflectv: Vector<f64, 4>,
@@ -202,6 +169,7 @@ impl<'a> Computations<'a> {
         object: &'a Object,
         point: Point<f64, 4>,
         over_point: Point<f64, 4>,
+        under_point: Point<f64, 4>,
         eyev: Vector<f64, 4>,
         normalv: Vector<f64, 4>,
         reflectv: Vector<f64, 4>,
@@ -214,10 +182,79 @@ impl<'a> Computations<'a> {
             object,
             point,
             over_point,
+            under_point,
             eyev,
             normalv,
             reflectv,
             inside,
         }
+    }
+
+    pub fn prepare_computation(
+        intersections: &'a Intersections<'a>,
+        intersection_index: usize,
+        ray: &Ray,
+    ) -> Computations<'a> {
+        let intersection = intersections.get(intersection_index).unwrap();
+        let mut containers: Vec<&Object> = Vec::new();
+        let mut n1 = 0.0;
+        let mut n2 = 0.0;
+
+        for (i, inter) in intersections.into_iter().enumerate() {
+            if i == intersection_index {
+                if containers.is_empty() {
+                    n1 = 1.0;
+                } else {
+                    let last = containers.last().unwrap();
+                    n1 = last.material.refractive_index;
+                }
+            }
+
+            match containers
+                .iter()
+                .position(|&object| std::ptr::eq(object, inter.object))
+            {
+                Some(pos) => {
+                    let _ = containers.remove(pos);
+                }
+                None => containers.push(inter.object),
+            }
+
+            if i == intersection_index {
+                if containers.is_empty() {
+                    n2 = 1.0;
+                } else {
+                    let last = containers.last().unwrap();
+                    n2 = last.material.refractive_index;
+                    break;
+                }
+            }
+        }
+
+        let mut comp = Intersection::prepare_computation(intersection, ray);
+
+        comp.n1 = n1;
+        comp.n2 = n2;
+
+        comp
+    }
+
+    pub fn schlick(&self) -> f64 {
+        let mut cos = self.eyev * self.normalv;
+
+        if self.n1 > self.n2 {
+            let n = self.n1 / self.n2;
+            let sin2_t = n.powi(2) * (1.0 - cos.powi(2));
+
+            if sin2_t > 1.0 {
+                return 1.0;
+            }
+
+            cos = (1.0 - sin2_t).sqrt();
+        }
+
+        let r0 = ((self.n1 - self.n2) / (self.n1 + self.n2)).powi(2);
+
+        r0 + (1.0 - r0) * (1.0 - cos).powi(5)
     }
 }

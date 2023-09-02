@@ -1,7 +1,9 @@
 #[cfg(test)]
 mod inter_test {
     use rtc::intersection::Computations;
+    use rtc::transformation::scaling;
     use rtc::transformation::translation;
+    use rtc::ApproximateEq;
     use rtc::Intersection;
     use rtc::Intersections;
     use rtc::Object;
@@ -70,7 +72,7 @@ mod inter_test {
         let mut object = Object::new_sphere();
         object.set_transformation(translation(0.0, 0.0, 1.0));
         let i = Intersection::new(5.0, &object);
-        let comp = i.prepare_computation(&Intersections::new(), 0, &ray);
+        let comp = i.prepare_computation(&ray);
         let epsilon = 1.0e-6;
 
         let expected = true;
@@ -93,7 +95,7 @@ mod inter_test {
 
         let object = Object::new_plane();
         let i = Intersection::new(sqrt2, &object);
-        let comp = i.prepare_computation(&Intersections::new(), 0, &ray);
+        let comp = i.prepare_computation(&ray);
 
         let expected = Vector::new_vec3D(0.0, half_sqrt2, half_sqrt2);
         assert_eq!(expected, comp.reflectv);
@@ -101,15 +103,15 @@ mod inter_test {
 
     #[test]
     fn finding_n1_n2_at_various_intersection() {
-        let object_a = Object::new_glass_sphere();
+        let mut object_a = Object::new_glass_sphere();
         object_a.set_transformation(scaling(2.0, 2.0, 2.0));
         object_a.material.refractive_index = 1.5;
 
-        let object_b = Object::new_glass_sphere();
+        let mut object_b = Object::new_glass_sphere();
         object_b.set_transformation(translation(0.0, 0.0, -0.25));
         object_b.material.refractive_index = 2.0;
 
-        let object_c = Object::new_glass_sphere();
+        let mut object_c = Object::new_glass_sphere();
 
         object_c.material.refractive_index = 2.0;
         object_c.set_transformation(translation(0.0, 0.0, 0.25));
@@ -121,18 +123,75 @@ mod inter_test {
         );
 
         let mut xs = Intersections::new();
-        xs.add(Intersection::new(2, &object_a));
+        xs.add(Intersection::new(2.0, &object_a));
         xs.add(Intersection::new(2.75, &object_b));
         xs.add(Intersection::new(3.25, &object_c));
         xs.add(Intersection::new(4.75, &object_b));
         xs.add(Intersection::new(5.25, &object_c));
-        xs.add(Intersection::new(6, &object_a));
+        xs.add(Intersection::new(6.0, &object_a));
 
-        let mut comp = xs.prepare_computation(&xs, 0, &ray); 
-        let mut expected = (1.0,1.5);
-        let mut result = (comp.n1,comp.n2);
-
+        let mut comp = Computations::prepare_computation(&xs, 0, &ray);
+        let mut expected = (1.0, 1.5);
+        let mut result = (comp.n1, comp.n2);
         assert_eq!(expected, result);
 
+        comp = Computations::prepare_computation(&xs, 1, &ray);
+        expected = (1.5, 2.0);
+        result = (comp.n1, comp.n2);
+        assert_eq!(expected, result);
+
+        comp = Computations::prepare_computation(&xs, 2, &ray);
+        expected = (2.0, 2.5);
+        result = (comp.n1, comp.n2);
+        assert_eq!(expected, result);
+    }
+
+    #[test]
+    fn the_schlick_approximation_under_total_internal_reflection() {
+        let object = Object::new_glass_sphere();
+        let ray = Ray {
+            origin: Point::new_point3D(0.0, 0.0, f64::sqrt(2.0) / 2.0),
+            direction: Vector::new_vec3D(0.0, 1.0, 0.0),
+        };
+
+        let mut xs = Intersections::new();
+        xs.add(Intersection::new(-f64::sqrt(2.0) / 2.0, &object));
+        xs.add(Intersection::new(f64::sqrt(2.0) / 2.0, &object));
+
+        let comps = Computations::prepare_computation(&xs, 1, &ray);
+
+        assert!(comps.schlick().approx_eq_low(&1.0));
+    }
+
+    #[test]
+    fn the_schlick_approximation_with_a_perpendicular_viewing_angle() {
+        let object = Object::new_glass_sphere();
+        let ray = Ray {
+            origin: Point::new_point3D(0.0, 0.0, 0.0),
+            direction: Vector::new_vec3D(0.0, 1.0, 0.0),
+        };
+        let mut xs = Intersections::new(); 
+        xs.add(Intersection::new(-1.0, &object));
+        xs.add(Intersection::new(1.0, &object));
+
+        let comps = Computations::prepare_computation(&xs, 1, &ray);
+
+        assert!(comps.schlick().approx_eq_low(&0.04));
+    }
+
+    #[test]
+    fn the_schlick_approximation_with_small_angle_and_n2_greater_than_n1() {
+        let object = Object::new_glass_sphere();
+        let ray = Ray {
+            origin: Point::new_point3D(0.0, 0.99, -2.0),
+            direction: Vector::new_vec3D(0.0, 0.0, 1.0),
+        };
+
+        let mut xs = Intersections::new();
+        xs.add(Intersection::new(1.8589, &object));
+
+        let comps = Computations::prepare_computation(&xs, 0, &ray);
+
+        assert!(comps.schlick().approx_eq_low(&0.48873));
     }
 }
