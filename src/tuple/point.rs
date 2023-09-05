@@ -5,6 +5,8 @@ use super::super::Zero;
 use super::tuple::Tuple;
 use super::vector::Vector;
 use std::cmp::PartialEq;
+use std::ops::Index;
+use std::ops::IndexMut;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Clone, Copy, Debug)]
@@ -235,5 +237,19 @@ where
         }
 
         Point { data }
+    }
+}
+
+impl<T, const N: usize> Index<usize> for Point<T, N> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &T {
+        &self.data[index]
+    }
+}
+
+impl<T, const N: usize> IndexMut<usize> for Point<T, N> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        &mut self.data[index]
     }
 }

@@ -1,9 +1,9 @@
+use crate::ApproximateEq;
+use crate::One;
 use crate::Point;
 use crate::Vector;
+use crate::Zero;
 
-use super::ApproximateEq;
-use super::One;
-use super::Zero;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 type Mtx<T, const N: usize, const M: usize> = [[T; M]; N];

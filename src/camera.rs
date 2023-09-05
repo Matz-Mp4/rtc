@@ -1,5 +1,7 @@
 use crate::{Canvas, Matrix, Point, Ray, Vector, World};
 use colored::{self, Colorize};
+use indicatif::{ProgressBar, ProgressStyle};
+use rayon::prelude::*;
 
 pub struct Camera {
     pub hsize: usize,
@@ -29,13 +31,38 @@ impl Camera {
 
     pub fn render(&self, world: &World) -> Canvas {
         let mut image = Canvas::new(self.hsize, self.vsize);
+        let pb = ProgressBar::new(image.pixels().len() as u64);
 
-        println!("{}", "RayTracing...".yellow().bold());
+        println!("{}", "RayTracing...".italic().bold());
+        (0..self.hsize)
+            .flat_map(move |px| (0..self.vsize).map(move |py| (px, py)))
+            .collect::<Vec<_>>()
+            .into_par_iter()
+            .map(|(px, py)| {
+                let ray = self.ray_for_pixel(px, py);
+                pb.inc(1);
+                let color = world.color_at(&ray, world.reflection_limit);
+                (px, py, color)
+            })
+            .collect::<Vec<_>>()
+            .into_iter()
+            .for_each(|(px, py, color)| {
+                image[py][px] = color;
+            });
+        image
+    }
+    pub fn render2(&self, world: &World) -> Canvas {
+        let mut image = Canvas::new(self.hsize, self.vsize);
+        let pb = ProgressBar::new(image.pixels().len() as u64);
+        println!("{}", "RayTracing...".italic().bold());
+
         for y in 0..self.vsize {
             for x in 0..self.hsize {
                 let ray = self.ray_for_pixel(x, y);
                 let color = world.color_at(&ray, world.reflection_limit);
                 image[y][x] = color;
+
+                pb.inc(1);
             }
         }
 

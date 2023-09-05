@@ -1,6 +1,6 @@
-use super::matrix::Matrix;
-use super::Point;
-use super::Vector;
+use crate::Matrix;
+use crate::Point;
+use crate::Vector;
 
 pub fn translation(x: f64, y: f64, z: f64) -> Matrix<f64, 4, 4> {
     let mut data = [[0.0; 4]; 4];
@@ -89,21 +89,21 @@ pub fn view_transform(
 
     let orientation = Matrix::from([
         [
-            *left.get(0).unwrap(),
-            *left.get(1).unwrap(),
-            *left.get(2).unwrap(),
+            left[0],
+            left[1],
+            left[2],
             0.0,
         ],
         [
-            *true_up.get(0).unwrap(),
-            *true_up.get(1).unwrap(),
-            *true_up.get(2).unwrap(),
+            true_up[0],
+            true_up[1],
+            true_up[2],
             0.0,
         ],
         [
-            -(*forward.get(0).unwrap()),
-            -(*forward.get(1).unwrap()),
-            -(*forward.get(2).unwrap()),
+            forward[0],
+            -(forward[1]),
+            -(forward[2]),
             0.0,
         ],
         [0.0, 0.0, 0.0, 1.0],
@@ -111,8 +111,8 @@ pub fn view_transform(
 
     orientation
         * translation(
-            -from.get(0).unwrap(),
-            -from.get(1).unwrap(),
-            -(*from.get(2).unwrap()),
+            -from[0],
+            -from[1],
+            -(from[2]),
         )
 }

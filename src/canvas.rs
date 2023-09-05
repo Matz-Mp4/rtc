@@ -4,8 +4,8 @@ use std::fs::{self, File};
 use std::ops::{Index, IndexMut};
 
 pub struct Canvas {
-    width: usize,
-    height: usize,
+    pub width: usize,
+    pub height: usize,
     pixels: Vec<Color>,
 }
 
@@ -18,7 +18,7 @@ impl Canvas {
         }
     }
 
-    pub fn set_pixels(&mut self, pixels: Vec<Color>)  {
+    pub fn set_pixels(&mut self, pixels: Vec<Color>) {
         self.pixels = pixels;
     }
 
@@ -33,7 +33,8 @@ impl Canvas {
         let mut img = image::ImageBuffer::new(self.width as u32, self.height as u32);
         let _output = File::create(file_name);
 
-        println!("{}{}" ,"Writing ".green().bold() , file_name);
+
+        println!("{}{}", "Writing ".italic().bold(), file_name);
 
         for (x, y, pixel) in img.enumerate_pixels_mut() {
             let color = &self[y as usize][x as usize];
@@ -42,17 +43,15 @@ impl Canvas {
             let b = scale_color(color.blue);
 
             *pixel = image::Rgb([r, g, b]);
-            
         }
 
         img.save(file_name)
     }
 
     pub fn convert_to_ppm(&self, file_name: &str) -> Result<File, std::io::Error> {
-        println!("Writing {}", file_name);
+        println!("{}{}", "Writing ".italic().bold(), file_name);
         let image = File::create(file_name);
 
-        let total_size = self.width * self.height;
         let mut content = String::new();
         //Header
         content.push_str("P3\n");

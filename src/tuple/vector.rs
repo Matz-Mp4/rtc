@@ -1,7 +1,7 @@
 use super::super::One;
 use core::ops::Deref;
 use std::cmp::PartialEq;
-use std::ops::{Add, BitOr, Div, Mul, Neg, Sub};
+use std::ops::{Add, BitOr, Div, Index, IndexMut, Mul, Neg, Sub};
 
 use super::super::ApproximateEq;
 use super::super::Zero;
@@ -319,5 +319,19 @@ impl<T: Copy + Zero + Sized, const N: usize> Deref for Vector<&T, N> {
     type Target = Vector<T, N>;
     fn deref(&self) -> &Self::Target {
         unsafe { std::mem::transmute(self) }
+    }
+}
+
+impl<T, const N: usize> Index<usize> for Vector<T, N> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &T {
+        &self.data[index]
+    }
+}
+
+impl<T, const N: usize> IndexMut<usize> for Vector<T, N> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        &mut self.data[index]
     }
 }
