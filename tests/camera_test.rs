@@ -69,7 +69,7 @@ mod ray_test {
 
     #[test]
     fn render_a_world() {
-        let w = World::default();
+        let w = World::default_test();
         let mut c = Camera::new(11, 11, PI / 2.0);
         let from = Point::new_point3D(0.0, 0.0, -5.0);
         let to = Point::new_point3D(0.0, 0.0, 0.0);

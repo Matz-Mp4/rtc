@@ -2,6 +2,7 @@ use super::ApproximateEq;
 use std::cmp::PartialEq;
 use std::ops::{Add, Div, Mul, Sub};
 
+
 #[derive(Clone, Copy, Debug)]
 pub struct Color {
     pub red: f64,

@@ -51,24 +51,6 @@ impl Camera {
             });
         image
     }
-    pub fn render2(&self, world: &World) -> Canvas {
-        let mut image = Canvas::new(self.hsize, self.vsize);
-        let pb = ProgressBar::new(image.pixels().len() as u64);
-        println!("{}", "RayTracing...".italic().bold());
-
-        for y in 0..self.vsize {
-            for x in 0..self.hsize {
-                let ray = self.ray_for_pixel(x, y);
-                let color = world.color_at(&ray, world.reflection_limit);
-                image[y][x] = color;
-
-                pb.inc(1);
-            }
-        }
-
-        image
-    }
-
     fn compute_pixel_size(hsize: usize, vsize: usize, fov: f64) -> (f64, f64, f64) {
         let half_view = f64::tan(fov / 2.0);
         let aspect = hsize as f64 / vsize as f64;

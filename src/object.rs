@@ -1,4 +1,5 @@
-use crate::{color::Color, Material, Matrix, Point, Ray, Shape, Vector};
+use crate::transformation::*;
+use crate::{color::Color, Material, Matrix, Motion, Pattern, Point, Ray, Shape, Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Object {
@@ -7,6 +8,44 @@ pub struct Object {
     transformation: Matrix<f64, 4, 4>,
     inverse_transformation: Matrix<f64, 4, 4>,
     inverse_transpose: Matrix<f64, 4, 4>,
+}
+
+impl Motion for Object {
+    fn move_front(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, 0.0, value) * self.transformation;
+        self.set_transformation(move_front);
+        *self
+    }
+
+    fn move_back(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, 0.0, -value) * self.transformation;
+        self.set_transformation(move_front);
+        *self
+    }
+
+    fn move_left(&mut self, value: f64) -> Self {
+        let move_front = translation(-value, 0.0, 0.0) * self.transformation;
+        self.set_transformation(move_front);
+        *self
+    }
+
+    fn move_right(&mut self, value: f64) -> Self {
+        let move_front = translation(value, 0.0, 0.0) * self.transformation;
+        self.set_transformation(move_front);
+        *self
+    }
+
+    fn move_up(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, value, 0.0) * self.transformation;
+        self.set_transformation(move_front);
+        *self
+    }
+
+    fn move_down(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, -value, 0.0) * self.transformation;
+        self.set_transformation(move_front);
+        *self
+    }
 }
 
 impl Object {
@@ -57,20 +96,45 @@ impl Object {
         }
     }
 
+    pub fn with_color(mut self, color: Color) -> Self {
+        self.material.color = color;
+        self
+    }
+
+    pub fn with_ambient(mut self, ambient: f64) -> Self {
+        self.material.ambient = ambient;
+        self
+    }
+
+    pub fn with_diffuse(mut self, diffuse: f64) -> Self {
+        self.material.diffuse = diffuse;
+        self
+    }
+
+    pub fn with_specular(mut self, specular: f64) -> Self {
+        self.material.specular = specular;
+        self
+    }
+
+    pub fn with_pattern(mut self, pattern: Pattern) -> Self {
+        self.material.pattern = pattern;
+        self
+    }
+
     pub fn set_material(&mut self, material: Material) {
         self.material = material;
     }
 
-    pub fn set_color(&mut self, color: Color) {
-        self.material.set_color(color);
-    }
+    pub fn with_transformation(mut self, transformation: Matrix<f64, 4, 4>) -> Self {
+        let inverse = transformation.inverse();
+        let transpose = inverse.trans();
+        self.transformation = transformation;
+        /* self.material.pattern.transformation= transformation; */
+        /* self.material.pattern.inverse= inverse; */
+        self.inverse_transformation = inverse;
+        self.inverse_transpose = transpose;
 
-    pub fn set_difuse(&mut self, diffuse: f64) {
-        self.material.set_diffuse(diffuse);
-    }
-
-    pub fn set_specular(&mut self, specular: f64) {
-        self.material.set_specular(specular);
+        self
     }
 
     pub fn set_transformation(&mut self, transformation: Matrix<f64, 4, 4>) {

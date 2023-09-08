@@ -9,6 +9,7 @@ use std::ops::Index;
 use std::ops::IndexMut;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+
 #[derive(Clone, Copy, Debug)]
 pub struct Point<T, const N: usize> {
     data: [T; N],

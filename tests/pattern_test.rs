@@ -100,16 +100,12 @@ mod pattern_test {
 
         #[test]
         pub fn lighting_with_a_striped_pattern() {
-            let mut object = Object::new_sphere();
-            object.material.set_ambient(1.0);
-            object.material.set_diffuse(0.0);
-            object.material.set_specular(0.0);
-            object
-                .material
-                .set_pattern(Pattern::with_type(PatternType::striped_pattern(
-                    Color::white(),
-                    Color::black(),
-                )));
+            let mut object = Object::new_sphere().with_pattern(Pattern::with_type(
+                PatternType::striped_pattern(Color::white(), Color::black()),
+            ));
+            object.material.ambient = 1.0;
+            object.material.diffuse = 0.0;
+            object.material.specular = 0.0;
 
             let eyev = Vector::new_vec3D(0.0, 0.0, -1.0);
             let normalv = Vector::new_vec3D(0.0, 0.0, -1.0);
@@ -141,11 +137,9 @@ mod pattern_test {
 
         #[test]
         fn stripes_with_object_transformed() {
-            let mut object = Object::new_sphere();
-            object.set_transformation(scaling(2.0, 2.0, 2.0));
-            object
-                .material
-                .set_pattern(Pattern::with_type(PatternType::striped_pattern(
+            let mut object = Object::new_sphere()
+                .with_transformation(scaling(2.0, 2.0, 2.0))
+                .with_pattern(Pattern::with_type(PatternType::striped_pattern(
                     Color::white(),
                     Color::black(),
                 )));
@@ -160,13 +154,9 @@ mod pattern_test {
 
         #[test]
         fn stripes_with_pattern_transformed() {
-            let mut object = Object::new_sphere();
-            object
-                .material
-                .set_pattern(Pattern::with_type(PatternType::striped_pattern(
-                    Color::white(),
-                    Color::black(),
-                )));
+            let mut object = Object::new_sphere().with_pattern(Pattern::with_type(
+                PatternType::striped_pattern(Color::white(), Color::black()),
+            ));
 
             object
                 .material
@@ -185,12 +175,8 @@ mod pattern_test {
         fn stripes_with_pattern_object_transformed() {
             let mut object = Object::new_sphere();
             object.set_transformation(scaling(2.0, 2.0, 2.0));
-            object
-                .material
-                .set_pattern(Pattern::with_type(PatternType::striped_pattern(
-                    Color::white(),
-                    Color::black(),
-                )));
+            object.material.pattern =
+                Pattern::with_type(PatternType::striped_pattern(Color::white(), Color::black()));
 
             object
                 .material
@@ -270,7 +256,7 @@ mod pattern_test {
         }
     }
 
-    mod checker{
+    mod checker {
         use rtc::{color::Color, pattern::Checker, Point};
 
         #[test]
@@ -293,8 +279,6 @@ mod pattern_test {
                 expected,
                 pattern.checker_at(&Point::new_point3D(1.01, 0.0, 0.0))
             );
-
-            
         }
     }
 }

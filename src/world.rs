@@ -32,15 +32,15 @@ impl World {
         self.objects.get_mut(i)
     }
 
-    pub fn default() -> World {
+    pub fn default_test() -> World {
         let light_positon = Point::new_point3D(-10.0, 10.0, -10.0);
         let light_color = Color::white();
         let light = Light::new(light_color, light_positon);
 
         let mut ob1 = Object::new_sphere();
-        ob1.set_color(Color::new(0.8, 1.0, 0.6));
-        ob1.set_difuse(0.7);
-        ob1.set_specular(0.2);
+        ob1.material.color = Color::new(0.8, 1.0, 0.6);
+        ob1.material.diffuse = 0.7;
+        ob1.material.specular = 0.2;
 
         let mut ob2 = Object::new_sphere();
         ob2.set_transformation(scaling(0.5, 0.5, 0.5));

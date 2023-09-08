@@ -7,7 +7,7 @@ mod world_test {
 
     #[test]
     fn shading_intersection() {
-        let world = World::default();
+        let world = World::default_test();
         let ray = Ray::new(
             Point::new_point3D(0.0, 0.0, -5.0),
             Vector::new_vec3D(0.0, 0.0, 1.0),
@@ -20,7 +20,7 @@ mod world_test {
 
     #[test]
     fn shading_intersection_from_inside() {
-        let mut world = World::default();
+        let mut world = World::default_test();
         world.light = Light::new(
             Color::new(1.0, 1.0, 1.0),
             Point::new_point3D(0.0, 0.25, 0.0),
@@ -37,7 +37,7 @@ mod world_test {
 
     #[test]
     fn color_when_ray_misses() {
-        let world = World::default();
+        let world = World::default_test();
         let ray = Ray::new(
             Point::new_point3D(0.0, 0.0, -5.0),
             Vector::new_vec3D(0.0, 1.0, 0.0),
@@ -50,7 +50,7 @@ mod world_test {
 
     #[test]
     fn color_when_ray_hits() {
-        let world = World::default();
+        let world = World::default_test();
         let ray = Ray::new(
             Point::new_point3D(0.0, 0.0, -5.0),
             Vector::new_vec3D(0.0, 0.0, 1.0),
@@ -63,7 +63,7 @@ mod world_test {
 
     #[test]
     fn there_is_no_shadow() {
-        let world = World::default();
+        let world = World::default_test();
         let p = Point::new_point3D(0.0, 10.0, 0.0);
         let expected = false;
 
@@ -72,7 +72,7 @@ mod world_test {
 
     #[test]
     fn shadow_when_object_between_point_and_light() {
-        let world = World::default();
+        let world = World::default_test();
         let p = Point::new_point3D(10.0, -10.0, 10.0);
         let expected = true;
 
@@ -81,7 +81,7 @@ mod world_test {
 
     #[test]
     fn no_shadow_when_object_is_behind_light() {
-        let world = World::default();
+        let world = World::default_test();
         let p = Point::new_point3D(-20.0, 20.0, -20.0);
         let expected = false;
 
@@ -90,7 +90,7 @@ mod world_test {
 
     #[test]
     fn no_shadow_when_object_is_behind_point() {
-        let world = World::default();
+        let world = World::default_test();
         let p = Point::new_point3D(-2.0, 2.0, -2.0);
         let expected = false;
 
@@ -99,7 +99,7 @@ mod world_test {
 
     #[test]
     fn reflected_color() {
-        let mut world = World::default();
+        let mut world = World::default_test();
 
         let mut object = Object::new_plane();
         object.material.reflective = 0.5;
@@ -124,7 +124,7 @@ mod world_test {
 
     #[test]
     fn reflected_color_maximum_recursive_depth() {
-        let mut world = World::default();
+        let mut world = World::default_test();
         world.reflection_limit = 0;
 
         let mut object = Object::new_plane();
@@ -150,7 +150,7 @@ mod world_test {
 
     #[test]
     fn refracted_color_at_maximum_recursive_depth() {
-        let mut world = World::default();
+        let mut world = World::default_test();
         world.reflection_limit = 0;
 
         let mut temp = world.clone();
@@ -175,7 +175,7 @@ mod world_test {
 
     #[test]
     fn refracted_color_under_total_internal_reflection() {
-        let mut world = World::default();
+        let mut world = World::default_test();
         world.reflection_limit = 5;
         let half_sqrt2 = 2.0f64.sqrt() / 2.0;
 
@@ -200,7 +200,7 @@ mod world_test {
     }
 
     fn refracted_color_with_refracted_ray() {
-        let mut world = World::default();
+        let mut world = World::default_test();
         world.reflection_limit = 5;
 
         let mut temp = world.clone();
@@ -231,7 +231,7 @@ mod world_test {
 
     #[test]
     fn shade_hit_with_a_reflective_transparent_material() {
-        let mut world = World::default();
+        let mut world = World::default_test();
         let half_sqrt2 = 2.0f64.sqrt() / 2.0;
         let ray = Ray::new(
             Point::new_point3D(0.0, 0.0, -3.0),
