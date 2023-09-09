@@ -5,10 +5,10 @@
  - An suggestion will be apreciate.
 
 # Examples 
-- `Run: cargo run -r --example example_1`
+`Run: cargo run -r --example example_1`
   
 ![](pictures/example_1.png)
 
-- `Run: cargo run -r --example example_2`
+`Run: cargo run -r --example example_2`
   
 ![](pictures/example_2.png)
