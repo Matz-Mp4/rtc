@@ -6,7 +6,7 @@
 
 # Examples 
 --  `Run: cargo run -r --example example_1`
-![](examples/example_1.png)
+![](pictures/example_1.png)
 
 --  `Run: cargo run -r --example example_2`
-![](examples/example_2.png)
+![](pictures/example_2.png)
