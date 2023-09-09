@@ -1,8 +1,9 @@
-use crate::{Canvas, Matrix, Point, Ray, Vector, World};
+use crate::{transformation::translation, Canvas, Matrix, Motion, Point, Ray, Vector, World};
 use colored::{self, Colorize};
-use indicatif::{ProgressBar, ProgressStyle};
+use indicatif::ProgressBar;
 use rayon::prelude::*;
 
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Camera {
     pub hsize: usize,
     pub vsize: usize,
@@ -12,6 +13,44 @@ pub struct Camera {
     pub pixel_size: f64,
     pub half_width: f64,
     pub half_height: f64,
+}
+
+impl Motion for Camera {
+    fn move_front(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, 0.0, value) * self.transform;
+        self.set_transformation(&move_front);
+        *self
+    }
+
+    fn move_back(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, 0.0, -value) * self.transform;
+        self.set_transformation(&move_front);
+        *self
+    }
+
+    fn move_left(&mut self, value: f64) -> Self {
+        let move_front = translation(-value, 0.0, 0.0) * self.transform;
+        self.set_transformation(&move_front);
+        *self
+    }
+
+    fn move_right(&mut self, value: f64) -> Self {
+        let move_front = translation(value, 0.0, 0.0) * self.transform;
+        self.set_transformation(&move_front);
+        *self
+    }
+
+    fn move_up(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, value, 0.0) * self.transform;
+        self.set_transformation(&move_front);
+        *self
+    }
+
+    fn move_down(&mut self, value: f64) -> Self {
+        let move_front = translation(0.0, -value, 0.0) * self.transform;
+        self.set_transformation(&move_front);
+        *self
+    }
 }
 
 impl Camera {
@@ -90,7 +129,7 @@ impl Camera {
         Ray::new(origin, direction)
     }
 
-    pub fn with_transformation(&mut self, transform: &Matrix<f64, 4, 4>) {
+    pub fn set_transformation(&mut self, transform: &Matrix<f64, 4, 4>) {
         self.transform = *transform;
         self.inverse_transform = transform.inverse();
     }

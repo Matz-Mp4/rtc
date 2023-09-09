@@ -1,7 +1,7 @@
 use crate::intersection::Computations;
 use crate::transformation::scaling;
-use crate::ApproximateEq;
 use crate::{color::Color, Light, Point};
+use crate::{ApproximateEq, Pattern, PatternType};
 use crate::{Intersection, Intersections, Object, Ray};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -17,6 +17,30 @@ impl World {
             light,
             objects,
             reflection_limit,
+        }
+    }
+
+    pub fn default() -> World {
+        let light_positon = Point::new_point3D(-10.0, 10.0, -10.0);
+        let light_color = Color::white();
+        let light = Light::new(light_color, light_positon);
+
+        let mut floor =
+            Object::new_plane()
+                .with_color(Color::white())
+                .with_pattern(Pattern::with_type(PatternType::checker_pattern(
+                    Color::black(),
+                    Color::white(),
+                )));
+        floor.material.specular = 1.0;
+        floor.material.reflective = 0.5;
+
+        let objects = Vec::from([floor]);
+
+        World {
+            light,
+            objects,
+            reflection_limit: 4,
         }
     }
 
