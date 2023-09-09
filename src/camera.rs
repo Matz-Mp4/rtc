@@ -1,4 +1,4 @@
-use crate::{transformation::translation, Canvas, Matrix, Motion, Point, Ray, Vector, World};
+use crate::{transformation::*, Canvas, Matrix, Motion, Point, Ray, Vector, World};
 use colored::{self, Colorize};
 use indicatif::ProgressBar;
 use rayon::prelude::*;
@@ -41,14 +41,38 @@ impl Motion for Camera {
     }
 
     fn move_up(&mut self, value: f64) -> Self {
-        let move_front = translation(0.0, value, 0.0) * self.transform;
+        let move_front = translation(0.0, -value, 0.0) * self.transform;
         self.set_transformation(&move_front);
         *self
     }
 
     fn move_down(&mut self, value: f64) -> Self {
-        let move_front = translation(0.0, -value, 0.0) * self.transform;
+        let move_front = translation(0.0, value, 0.0) * self.transform;
         self.set_transformation(&move_front);
+        *self
+    }
+
+    fn look_left(&mut self, degree: f64) -> Self {
+        let look = rotation_y(degree.to_radians()) * self.transform;
+        self.set_transformation(&look);
+        *self
+    }
+
+    fn look_right(&mut self, degree: f64) -> Self {
+        let look = rotation_y(-degree.to_radians()) * self.transform;
+        self.set_transformation(&look);
+        *self
+    }
+
+    fn look_up(&mut self, degree: f64) -> Self {
+        let look = rotation_x(-degree.to_radians()) * self.transform;
+        self.set_transformation(&look);
+        *self
+    }
+
+    fn look_down(&mut self, degree: f64) -> Self {
+        let look = rotation_x(degree.to_radians()) * self.transform;
+        self.set_transformation(&look);
         *self
     }
 }

@@ -46,6 +46,29 @@ impl Motion for Object {
         self.set_transformation(move_front);
         *self
     }
+    fn look_left(&mut self, degree: f64) -> Self {
+        let look = rotation_y(degree.to_radians()) * self.transformation;
+        self.set_transformation(look);
+        *self
+    }
+
+    fn look_right(&mut self, degree: f64) -> Self {
+        let look = rotation_y(-degree.to_radians()) * self.transformation;
+        self.set_transformation(look);
+        *self
+    }
+
+    fn look_up(&mut self, degree: f64) -> Self {
+        let look = rotation_x(-degree.to_radians()) * self.transformation;
+        self.set_transformation(look);
+        *self
+    }
+
+    fn look_down(&mut self, degree: f64) -> Self {
+        let look = rotation_x(degree.to_radians()) * self.transformation;
+        self.set_transformation(look);
+        *self
+    }
 }
 
 impl Object {

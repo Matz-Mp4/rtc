@@ -45,4 +45,20 @@ impl Motion for Light {
         self.position = translation(0.0, -value, 0.0) * self.position;
         *self
     }
+
+    fn look_left(&mut self, value: f64) -> Self {
+        todo!()
+    }
+
+    fn look_right(&mut self, value: f64) -> Self {
+        todo!()
+    }
+
+    fn look_up(&mut self, value: f64) -> Self {
+        todo!()
+    }
+
+    fn look_down(&mut self, value: f64) -> Self {
+        todo!()
+    }
 }
